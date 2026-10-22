@@ -1,0 +1,25 @@
+import { test, expect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+
+test('SM-34 Переход из оплаты в проект', async ({ page }) => {
+  // Пространство прогона (SM-02) создано перед прогоном
+  const { name, url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
+
+  // Шаг 1. Открыть /account/billing
+  await page.goto('/account/billing');
+  const paidProjects = page.getByRole('heading', { name: 'Проекты, которые вы оплачиваете' }).locator('xpath=following-sibling::ul');
+
+  // Шаг 2. В «Проекты, которые вы оплачиваете» нажать пространство прогона
+  await paidProjects.getByRole('link', { name, exact: true }).click({ timeout: 60_000 });
+
+  // Ожидание 1: открылся навигатор пространства прогона
+  // Адрес навигатора может дополняться параметрами (?explorerMode=docs), поэтому сравниваем начало адреса
+  await expect(page).toHaveURL(new RegExp(`^${url.replace(/[.?]/g, '\\$&')}`));
+  await expect(page.getByRole('button', { name: 'Сменить пространство' }).filter({ hasText: name })).toBeVisible({ timeout: 60_000 });
+
+  // Шаг 3. Нажать «Назад» в браузере
+  await page.goBack();
+
+  // Ожидание 2: адрес /account/billing
+  await expect(page).toHaveURL(/\/account\/billing/);
+});
