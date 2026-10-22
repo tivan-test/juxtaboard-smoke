@@ -26,8 +26,11 @@ test('удаление пространства прогона', async ({ page }
   await confirm.fill(name);
   await dialog.getByRole('button', { name: 'Удалить пространство' }).click();
 
-  // После удаления пространства нет в поиске на главной
-  await page.goto('/projects');
-  await page.getByRole('textbox', { name: 'Название пространства или документа…' }).fill(name);
-  await expect(page.getByText('Ничего не найдено')).toBeVisible({ timeout: 30_000 });
+  // Ждём, пока закроется окно подтверждения
+  await expect(dialog).toBeHidden({ timeout: 30_000 });
+
+  // Пространство удалено: его адрес отвечает «У вас нет доступа к этому пространству»
+  // (поиск на главной обновляется с задержкой, поэтому по нему не проверяем)
+  await page.goto(url);
+  await expect(page.getByRole('heading', { name: 'У вас нет доступа к этому пространству' })).toBeVisible({ timeout: 60_000 });
 });
