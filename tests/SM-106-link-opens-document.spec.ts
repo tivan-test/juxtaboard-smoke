@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { navigatorButton, openSpace, treeItem, treeRow } from './support/navigator';
 
@@ -22,7 +22,7 @@ test('SM-106 Новая ссылка', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let linkDialog, textId, linkId;
+  let linkDialog: Locator, textId: string | null, linkId: string | null;
 
   await test.step('Шаг 1. Стрелка ▾ у «+ Документ» → «Новая ссылка», название «TEST_SM106_Ссылка», выбрать TEST_SM106_Текст, создать', async () => {
     // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим

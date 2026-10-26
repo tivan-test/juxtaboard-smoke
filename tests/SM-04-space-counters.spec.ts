@@ -1,9 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { activeSpaces, hiddenSpaces, spaceCardTitles } from './support/projects';
 
 test('SM-04 Счётчики пространств не врут', async ({ page }) => {
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let activeLink, hiddenLink, n, m;
+  let activeLink: Locator, hiddenLink: Locator, n: number, m: number;
 
   await test.step('Шаг 1. Открыть /projects, запомнить число N из «Активных пространств: N» и число M из «Скрытых пространств: M»', async () => {
     await page.goto('/projects');

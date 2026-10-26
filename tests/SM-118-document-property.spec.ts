@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Response } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { navigatorButton, openSpace, openTreeItemActions, treeItem } from './support/navigator';
 
@@ -26,7 +26,7 @@ test('SM-118 ⋮ → «Свойства документа»', async ({ page }) 
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let saved;
+  let saved: Promise<Response>;
 
   await test.step('Шаг 1. ⋮ у TEST_SM118_Текст → «Свойства документа»', async () => {
     await openProps();

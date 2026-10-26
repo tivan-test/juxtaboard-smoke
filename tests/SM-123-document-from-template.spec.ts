@@ -9,7 +9,7 @@ test('SM-123 Шаблон и документ из шаблона', async ({ pag
   const createDialog = page.getByRole('dialog', { name: 'Создать документ' });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let urlBefore;
+  let urlBefore: string;
 
   await test.step('Шаг 1. «Режимы отображения» → «Шаблоны» → «+ Шаблон», название «TEST_SM123_Шаблон», «Создать»', async () => {
     await openSpace(page, url);

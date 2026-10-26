@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 test('SM-72 «Настройки уведомлений»', async ({ page }) => {
@@ -6,7 +6,7 @@ test('SM-72 «Настройки уведомлений»', async ({ page }) => 
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let dialog;
+  let dialog: Locator;
 
   await test.step('Шаг 1. Открыть навигатор пространства прогона → «Инструменты» → «Настройки уведомлений»', async () => {
     await page.goto(url);

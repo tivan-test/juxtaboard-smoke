@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Response } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { navigatorButton, openSpace, treeItem } from './support/navigator';
 import { documentEditor, editorToolbarButton } from './support/editor';
@@ -24,7 +24,7 @@ test('SM-133 «Добавить комментарий»', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let saved;
+  let saved: Promise<Response>;
 
   await test.step('Шаг 1. Открыть TEST_SM133_Текст, выделить слово «Проверка»', async () => {
     await treeItem(page, 'TEST_SM133_Текст').click();

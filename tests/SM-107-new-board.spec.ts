@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { openSpace, treeItem } from './support/navigator';
 
@@ -9,7 +9,7 @@ test('SM-107 Новая доска', async ({ page }) => {
   await openSpace(page, url);
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let createDialog;
+  let createDialog: Locator;
 
   await test.step('Шаг 1. Стрелка ▾ у «+ Документ» → «Новая доска», ввести «TEST_SM107_Доска», нажать «Создать»', async () => {
     // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 test('SM-55 Состояния документов: добавить и отменить', async ({ page }) => {
@@ -9,7 +9,7 @@ test('SM-55 Состояния документов: добавить и отм�
   const stateNames = () => dialog.getByRole('textbox', { name: 'Название состояния' }).evaluateAll((els) => els.map((e) => (e as HTMLInputElement).value));
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let admin;
+  let admin: Locator;
 
   await test.step('Шаг 1. Открыть навигатор пространства прогона → «Администрирование» → «Состояния документов»', async () => {
     await page.goto(url);

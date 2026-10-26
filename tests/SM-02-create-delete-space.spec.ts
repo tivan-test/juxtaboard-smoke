@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 
 test('SM-02 Создание и удаление пространства', async ({ page }) => {
   const now = new Date();
@@ -6,7 +6,7 @@ test('SM-02 Создание и удаление пространства', asyn
   const name = `TEST_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}_SM02`;
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let createDialog, deleteDialog, deleteButton, confirm;
+  let createDialog: Locator, deleteDialog: Locator, deleteButton: Locator, confirm: Locator;
 
   await test.step('Шаг 1. На странице /projects нажать «Добавить пространство»', async () => {
     await page.goto('/projects');

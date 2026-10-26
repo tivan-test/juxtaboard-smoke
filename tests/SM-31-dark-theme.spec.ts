@@ -9,7 +9,7 @@ test('SM-31 Тёмная тема и возврат', async ({ page }) => {
   const html = page.locator('html');
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let pressed, originalTheme;
+  let pressed: string[], originalTheme: string;
 
   await test.step('Шаг 1. Открыть /projects → кнопка профиля, запомнить выбранную тему в «Оформление»', async () => {
     await page.goto('/projects');

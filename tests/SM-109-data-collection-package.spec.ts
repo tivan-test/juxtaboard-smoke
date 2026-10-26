@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 test('SM-109 «Новый пакет сбора данных», без создания', async ({ page }) => {
@@ -9,7 +9,7 @@ test('SM-109 «Новый пакет сбора данных», без созд�
   await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let packageDialog;
+  let packageDialog: Locator;
 
   await test.step('Шаг 1. Стрелка ▾ у «+ Документ» → «Дополнительно» → «Новый пакет сбора данных»', async () => {
     // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим

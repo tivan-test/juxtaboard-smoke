@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { navigatorButton, openSpace, treeItem } from './support/navigator';
 import { documentEditor } from './support/editor';
@@ -19,7 +19,7 @@ test('SM-111 Поиск документа с главной', async ({ page }) 
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let search, docsGroup, result;
+  let search: Locator, docsGroup: Locator, result: Locator;
 
   await test.step('Шаг 1. Открыть /projects, ввести в поиск «TEST_SM111»', async () => {
     await page.goto('/projects');

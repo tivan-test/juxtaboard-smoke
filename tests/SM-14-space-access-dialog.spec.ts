@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { activeSpaces, spaceCard } from './support/projects';
 
@@ -7,7 +7,7 @@ test('SM-14 «+» у участников → «Управление досту�
   const { name } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let card, dialog;
+  let card: Locator, dialog: Locator;
 
   await test.step('Шаг 1. Открыть /projects и нажать «Показать ещё»', async () => {
     await page.goto('/projects');

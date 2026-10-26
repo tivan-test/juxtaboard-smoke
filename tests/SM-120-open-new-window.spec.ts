@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { navigatorButton, openSpace, openTreeItemActions, treeItem } from './support/navigator';
 
@@ -21,7 +21,7 @@ test('SM-120 ⋮ → «Открыть в новом окне»', async ({ page, 
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let newPagePromise, newPage;
+  let newPagePromise: Promise<Page>, newPage: Page;
 
   await test.step('Шаг 1. ⋮ у TEST_SM120_Текст → «Открыть в новом окне»', async () => {
     await openTreeItemActions(doc);

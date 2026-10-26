@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 test('SM-61 Защита удаления, без удаления', async ({ page }) => {
@@ -6,7 +6,7 @@ test('SM-61 Защита удаления, без удаления', async ({ pa
   const { name, url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let admin, dialog, deleteButton;
+  let admin: Locator, dialog: Locator, deleteButton: Locator;
 
   await test.step('Шаг 1. Открыть навигатор пространства прогона → «Администрирование» → «Удалить пространство»', async () => {
     await page.goto(url);

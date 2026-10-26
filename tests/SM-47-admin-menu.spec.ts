@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 test('SM-47 «Администрирование»', async ({ page }) => {
@@ -6,7 +6,7 @@ test('SM-47 «Администрирование»', async ({ page }) => {
   const { name, url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let admin, menu;
+  let admin: Locator, menu: Locator;
 
   await test.step('Шаг 1. Открыть навигатор пространства прогона', async () => {
     await page.goto(url);

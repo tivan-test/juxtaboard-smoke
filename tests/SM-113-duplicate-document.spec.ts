@@ -30,7 +30,7 @@ test('SM-113 Дублировать документ', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let urlBefore;
+  let urlBefore: string;
 
   await test.step('Шаг 1. ⋮ у TEST_SM113_Текст → «Дублировать»', async () => {
     await openTreeItemActions(original);

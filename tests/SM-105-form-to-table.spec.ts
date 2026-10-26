@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator, type Response } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { treeItem } from './support/navigator';
 import { dataGrid, gridRow, setUpDataTable } from './support/data-table';
@@ -13,7 +13,7 @@ test('SM-105 Форма пишет в таблицу', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let formDialog, targetSaved, fieldSaved;
+  let formDialog: Locator, targetSaved: Promise<Response>, fieldSaved: Promise<Response>;
 
   await test.step('Шаг 1. Стрелка ▾ у «+ Документ» → «Новая форма», ввести «TEST_SM105_Форма», нажать «Создать»', async () => {
     await page.getByRole('main').getByRole('button', { name: 'Новая таблица данных' }).click();

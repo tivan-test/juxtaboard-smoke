@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { navigatorButton, openSpace, openTreeItemActions, treeItem } from './support/navigator';
 
@@ -22,7 +22,7 @@ test('SM-114 ⋮ → «Редактировать»', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let editDialog;
+  let editDialog: Locator;
 
   await test.step('Шаг 1. ⋮ у TEST_SM114_Текст → «Редактировать»', async () => {
     await openTreeItemActions(oldDoc);

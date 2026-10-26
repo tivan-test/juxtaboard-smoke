@@ -7,7 +7,7 @@ test('SM-28 Фильтр «Все» в «Мои задачи»', async ({ page }
   const taskItems = page.getByRole('main').locator('section:not([aria-label])').getByRole('button');
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let allCount;
+  let allCount: number;
 
   await test.step('Шаг 1. Открыть /me/work', async () => {
     await page.goto('/me/work');

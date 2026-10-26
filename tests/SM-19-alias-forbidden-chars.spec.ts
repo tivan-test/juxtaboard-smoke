@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 
 test('SM-19 Алиас «Абв Test_1»', async ({ page }) => {
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let dialog;
+  let dialog: Locator;
 
   await test.step('Шаг 1. Открыть /projects → «Добавить пространство»', async () => {
     await page.goto('/projects');

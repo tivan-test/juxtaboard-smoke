@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { navigatorButton, openSpace, openTreeItemActions, treeItem } from './support/navigator';
 
@@ -19,7 +19,7 @@ test('SM-81 Переименование папки с иконкой', async ({
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let dialog;
+  let dialog: Locator;
 
   await test.step('Шаг 1. ⋮ у TEST_SM81_Папка → «Переименовать»', async () => {
     await openTreeItemActions(oldFolder);

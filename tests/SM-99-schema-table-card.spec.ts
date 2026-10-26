@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { setUpDataTable } from './support/data-table';
 import { activeSpaces, spaceCard } from './support/projects';
@@ -12,7 +12,7 @@ test('SM-99 «Схема» с таблицей', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let card, tableCard;
+  let card: Locator, tableCard: Locator;
 
   await test.step('Шаг 1. Открыть /projects, «Показать ещё»', async () => {
     await page.goto('/projects');

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { treeItem } from './support/navigator';
 import { dataGrid, gridRow, setUpDataTable } from './support/data-table';
@@ -14,7 +14,7 @@ test('SM-88 Поиск «Быстрый»', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let quickSearch;
+  let quickSearch: Locator;
 
   await test.step('Шаг 1. Открыть TEST_SM88_Таблица', async () => {
     await treeItem(page, 'TEST_SM88_Таблица').click();

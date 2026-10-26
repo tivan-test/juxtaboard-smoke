@@ -1,9 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { activeSpaces, spaceCardTitles } from './support/projects';
 
 test('SM-11 «Показать ещё»', async ({ page }) => {
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let activeCards, before;
+  let activeCards: Locator, before: number;
 
   await test.step('Шаг 1. Открыть /projects и посчитать карточки в «Активные пространства»', async () => {
     await page.goto('/projects');

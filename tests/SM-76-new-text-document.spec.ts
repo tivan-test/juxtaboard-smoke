@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { navigatorButton, openSpace, treeItem } from './support/navigator';
 import { documentEditor } from './support/editor';
@@ -9,7 +9,7 @@ test('SM-76 Новый документ с текстом', async ({ page }) => 
   const editor = documentEditor(page);
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let createDialog;
+  let createDialog: Locator;
 
   await test.step('Шаг 1. Открыть навигатор пространства прогона', async () => {
     await openSpace(page, url);

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { treeItem } from './support/navigator';
 import { addColumn, dataGrid, gridCell, gridRow, setUpDataTable } from './support/data-table';
@@ -20,7 +20,7 @@ test('SM-91 Столбец «Дата» и вид «Календарь»', async
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let dateCell, dayCell, card;
+  let dateCell: Locator, dayCell: Locator, card: Locator;
 
   await test.step('Шаг 1. Открыть TEST_SM91_Таблица', async () => {
     await treeItem(page, 'TEST_SM91_Таблица').click();

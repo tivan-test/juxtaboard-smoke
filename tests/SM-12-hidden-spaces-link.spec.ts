@@ -1,9 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { hiddenSpaces, spaceCardTitles } from './support/projects';
 
 test('SM-12 Переход к скрытым пространствам', async ({ page }) => {
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let hiddenLink;
+  let hiddenLink: Locator;
 
   await test.step('Шаг 1. Открыть /projects', async () => {
     await page.goto('/projects');

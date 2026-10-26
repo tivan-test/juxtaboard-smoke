@@ -8,7 +8,7 @@ test('SM-36 Редактирование профиля и возврат', asyn
   const lastName = editDialog.getByRole('textbox', { name: 'Фамилия' });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let originalFirst, originalLast;
+  let originalFirst: string, originalLast: string;
 
   await test.step('Шаг 1. Открыть /projects → кнопка профиля → «Редактировать профиль»', async () => {
     await page.goto('/projects');

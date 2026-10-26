@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { treeItem } from './support/navigator';
 import { setUpDataTable } from './support/data-table';
@@ -13,7 +13,7 @@ test('SM-104 Новая карта процесса', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let createDialog;
+  let createDialog: Locator;
 
   await test.step('Шаг 1. Стрелка ▾ у «+ Документ» → «Новая карта процесса», ввести «TEST_SM104_Карта», нажать «Создать»', async () => {
     // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим

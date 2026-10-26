@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Response } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 // Картинка 1×1 PNG, создаётся в коде (без файлов с компьютера)
@@ -22,7 +22,7 @@ test('SM-64 Альт-текст и теги ресурса', async ({ page }) =>
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let saved;
+  let saved: Promise<Response>;
 
   await test.step('Шаг 1. Открыть карточку TEST_SM64.png', async () => {
     await card.click();

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { activeSpaces, hiddenSpaces, openSpaceCardActions, spaceCard } from './support/projects';
 
@@ -9,7 +9,7 @@ test('SM-15 Скрыть и показать пространство', async ({
   const hidden = hiddenSpaces(page);
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let activeCard, hiddenCard;
+  let activeCard: Locator, hiddenCard: Locator;
 
   await test.step('Шаг 1. Открыть /projects, нажать «Показать ещё»', async () => {
     await page.goto('/projects');

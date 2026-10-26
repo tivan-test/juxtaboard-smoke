@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Response } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { openSpace, treeItem } from './support/navigator';
 
@@ -20,7 +20,7 @@ test('SM-103 Виджет «Текст»', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let dashboardSaved;
+  let dashboardSaved: Promise<Response>;
 
   await test.step('Шаг 1. Открыть TEST_SM103_Дашборд → «Начать редактирование»', async () => {
     await dashItem.click();

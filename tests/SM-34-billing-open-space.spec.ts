@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 test('SM-34 Переход из оплаты в проект', async ({ page }) => {
@@ -6,7 +6,7 @@ test('SM-34 Переход из оплаты в проект', async ({ page }) 
   const { name, url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let paidProjects;
+  let paidProjects: Locator;
 
   await test.step('Шаг 1. Открыть /account/billing', async () => {
     await page.goto('/account/billing');

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator, type Response } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { treeItem } from './support/navigator';
 import { dataGrid, gridCell, gridRow, setUpDataTable } from './support/data-table';
@@ -13,7 +13,7 @@ test('SM-98 История строки и «Отменить»', async ({ page 
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let titleCell, rowSaved, history, change, entry, historyWindow;
+  let titleCell: Locator, rowSaved: Promise<Response>, history: Locator, change: Locator, entry: Locator, historyWindow: Locator;
 
   await test.step('Шаг 1. Открыть TEST_SM98_Таблица, заменить «Было» на «Стало»', async () => {
     await treeItem(page, 'TEST_SM98_Таблица').click();

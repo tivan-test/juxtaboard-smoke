@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { navigatorButton, openSpace, treeItem } from './support/navigator';
 import { documentEditor, editorToolbarButton } from './support/editor';
@@ -25,7 +25,7 @@ test('SM-132 «Версии»: сохранить и откатить', async ({
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let versionsDialog;
+  let versionsDialog: Locator;
 
   await test.step('Шаг 1. Открыть TEST_SM132_Текст → «Версии» → «Сохранить версию»', async () => {
     await treeItem(page, 'TEST_SM132_Текст').click();

@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { openSpace, openTreeItemActions, treeItem } from './support/navigator';
 
@@ -21,7 +21,7 @@ test('SM-108 ⋮ доски → «Открыть на весь экран»', as
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let newPage;
+  let newPage: Page;
 
   await test.step('Шаг 1. ⋮ у TEST_SM108_Доска → «Открыть на весь экран»', async () => {
     await openTreeItemActions(boardItem);

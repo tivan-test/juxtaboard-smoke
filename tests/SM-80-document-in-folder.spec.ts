@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { childTreeItem, navigatorButton, openSpace, openTreeItemActions, treeItem } from './support/navigator';
 
@@ -18,7 +18,7 @@ test('SM-80 Документ в папке', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let createDialog;
+  let createDialog: Locator;
 
   await test.step('Шаг 1. ⋮ у TEST_SM80_Папка → «Создать» → «Новый документ»', async () => {
     await openTreeItemActions(folder);

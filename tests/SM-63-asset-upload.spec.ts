@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type FileChooser } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 // Картинка 1×1 PNG, создаётся в коде (без файлов с компьютера)
@@ -9,7 +9,7 @@ test('SM-63 Загрузка ресурса', async ({ page }) => {
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let chooser;
+  let chooser: FileChooser;
 
   await test.step('Шаг 1. Открыть навигатор пространства прогона → «Структуры проекта» → «Библиотека ресурсов»', async () => {
     await page.goto(url);

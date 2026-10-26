@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { docTree, navigatorButton, openSpace, treeFilter, treeItem } from './support/navigator';
 
@@ -8,7 +8,7 @@ test('SM-122 Тег при создании и фильтр #тег', async ({ p
   const editor = page.getByRole('textbox', { name: 'Текст документа' });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let createDialog;
+  let createDialog: Locator;
 
   await test.step('Шаг 1. «+ Документ», название «TEST_SM122_Тег»', async () => {
     await openSpace(page, url);

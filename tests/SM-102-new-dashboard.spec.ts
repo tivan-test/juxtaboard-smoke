@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { openSpace, treeItem } from './support/navigator';
 
@@ -10,7 +10,7 @@ test('SM-102 Новый дашборд', async ({ page }) => {
   await openSpace(page, url);
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let createDialog;
+  let createDialog: Locator;
 
   await test.step('Шаг 1. Стрелка ▾ у «+ Документ» → «Новый дашборд», ввести «TEST_SM102_Дашборд», нажать «Создать»', async () => {
     // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим

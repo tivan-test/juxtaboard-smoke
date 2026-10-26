@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { treeItem } from './support/navigator';
 import { addColumn, dataGrid, gridCell, gridRow, openColumnActions, setUpDataTable } from './support/data-table';
@@ -32,7 +32,7 @@ test('SM-90 Вид «Канбан»', async ({ page }) => {
   });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let newLane, uncategorizedLane;
+  let newLane: Locator, uncategorizedLane: Locator;
 
   await test.step('Шаг 1. Открыть TEST_SM90_Таблица', async () => {
     await treeItem(page, 'TEST_SM90_Таблица').click();

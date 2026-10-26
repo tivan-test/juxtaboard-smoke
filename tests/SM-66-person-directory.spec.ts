@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { openSpace } from './support/navigator';
 
@@ -7,7 +7,7 @@ test('SM-66 Справочник сотрудников', async ({ page }) => {
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let dialog;
+  let dialog: Locator;
 
   await test.step('Шаг 1. Открыть навигатор пространства прогона → «Структуры проекта» → «Справочники сотрудников»', async () => {
     await openSpace(page, url);

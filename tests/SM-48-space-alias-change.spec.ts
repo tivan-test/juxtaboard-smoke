@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Locator } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
 test('SM-48 Смена алиаса и возврат', async ({ page }) => {
@@ -8,7 +8,7 @@ test('SM-48 Смена алиаса и возврат', async ({ page }) => {
   const alias = editDialog.getByRole('textbox', { name: 'Алиас' });
 
   // Объявлено до шагов, потому что используется в нескольких шагах
-  let admin, originalAlias;
+  let admin: Locator, originalAlias: string;
 
   await test.step('Шаг 1. Открыть навигатор пространства прогона → «Администрирование» → «Редактировать»', async () => {
     await page.goto(url);
