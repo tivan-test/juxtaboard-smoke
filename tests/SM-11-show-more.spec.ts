@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { activeSpaces, spaceCardTitles } from './support/projects';
 
 test('SM-11 «Показать ещё»', async ({ page }) => {
   // Шаг 1. Открыть /projects и посчитать карточки в «Активные пространства»
   await page.goto('/projects');
-  const activeCards = page.locator('#active-spaces').getByRole('heading', { level: 3 });
-  await expect(activeCards.first()).toBeVisible({ timeout: 60_000 });
+  const activeCards = spaceCardTitles(activeSpaces(page));
+  await expect(activeCards).not.toHaveCount(0, { timeout: 60_000 });
   const before = await activeCards.count();
 
   // Шаг 2. Нажать «Показать ещё»

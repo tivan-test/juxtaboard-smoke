@@ -1,22 +1,19 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { navigatorButton, openSpace } from './support/navigator';
 
 test('SM-74 Архив, Шаблоны, Вложенные файлы', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
   const panel = page.getByRole('main');
-  // У кнопки «Режимы отображения» нет названия, находим её по иконке.
-  // Иконка зависит от режима: папка (Документы), архив, файлы (Шаблоны), скрепка (Вложенные файлы).
-  // TODO для разработчиков: добавить кнопке aria-label «Режимы отображения»
-  const viewModes = panel.getByRole('button').filter({ has: page.locator('svg.lucide-folder-open, svg.lucide-archive, svg.lucide-files, svg.lucide-paperclip') });
+  // Иконка кнопки зависит от режима, а название одно: «Режимы отображения»
   const chooseMode = async (mode: string) => {
-    await viewModes.click();
+    await panel.getByRole('button', { name: 'Режимы отображения', exact: true }).click();
     await page.getByRole('menuitem', { name: mode, exact: true }).click();
   };
 
   // Шаг 1. Открыть навигатор пространства прогона
-  await page.goto(url);
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+  await openSpace(page, url);
 
   // Шаг 2. Нажать «Режимы отображения» (иконка папки) → «Архив»
   await chooseMode('Архив');
@@ -39,6 +36,6 @@ test('SM-74 Архив, Шаблоны, Вложенные файлы', async ({
   // Шаг 5. «Режимы отображения» → «Документы»
   await chooseMode('Документы');
 
-  // Ожидание 4: видна кнопка «Документ» (вторая такая же кнопка есть на пустой странице пространства, кнопка панели — первая)
-  await expect(panel.getByRole('button', { name: 'Документ', exact: true }).first()).toBeVisible();
+  // Ожидание 4: видна кнопка «Документ» на панели
+  await expect(navigatorButton(page, 'Документ')).toBeVisible();
 });

@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { openSpace, treeItem } from './support/navigator';
 
 test('SM-107 Новая доска', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
-  await page.goto(url);
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+  await openSpace(page, url);
 
   // Шаг 1. Стрелка ▾ у «+ Документ» → «Новая доска», ввести «TEST_SM107_Доска», нажать «Создать»
   // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим
@@ -17,10 +17,11 @@ test('SM-107 Новая доска', async ({ page }) => {
   await createDialog.getByRole('button', { name: 'Создать' }).click();
 
   // Шаг 2. Нажать «TEST_SM107_Доска» в дереве (после создания она сама не открывается)
-  await page.locator('[data-document-id]').filter({ hasText: 'TEST_SM107_Доска' }).click();
+  await treeItem(page, 'TEST_SM107_Доска').click();
 
   // Ожидание: открылся холст доски с панелью инструментов
   // Холст — это canvas без роли; панель инструментов — кнопки с названиями
+  // eslint-disable-next-line playwright/no-raw-locators -- холст доски (@wboard/core) — <canvas> без роли и имени
   await expect(page.locator('canvas')).toBeVisible({ timeout: 30_000 });
   await expect(page.getByRole('button', { name: 'Выбрать (V)' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Перо (P)' })).toBeVisible();

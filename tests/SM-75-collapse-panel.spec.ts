@@ -5,10 +5,9 @@ test('SM-75 «Свернуть панель»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
   const filter = page.getByRole('textbox', { name: 'Фильтр по имени или #тегу…' });
-  // У стрелок «<» и «>» нет названий, находим их по иконке.
-  // TODO для разработчиков: добавить кнопкам aria-label «Свернуть панель» / «Развернуть панель»
-  const collapse = page.getByRole('main').getByRole('button').filter({ has: page.locator('svg.lucide-chevron-left') });
-  const expand = page.getByRole('main').getByRole('button').filter({ has: page.locator('svg.lucide-chevron-right') });
+  // Стрелки «<» и «>»: «Свернуть панель» вверху панели и «Развернуть панель» на узкой полосе
+  const collapse = page.getByRole('main').getByRole('button', { name: 'Свернуть панель', exact: true });
+  const expand = page.getByRole('main').getByRole('button', { name: 'Развернуть панель', exact: true });
   // При свёрнутой панели поле остаётся на странице, его обрезает край панели.
   // Поэтому «видно» проверяем так, как видит человек: поле находится в своей точке экрана
   const filterSeen = () => filter.evaluate((el) => {
@@ -27,7 +26,7 @@ test('SM-75 «Свернуть панель»', async ({ page }) => {
   // Ожидание 1: поле «Фильтр по имени или #тегу…» не видно
   await expect.poll(filterSeen, { message: 'поле фильтра скрыто' }).toBe(false);
 
-  // Шаг 3. Нажать стрелку «>» на узкой полосе слева
+  // Шаг 3. Нажать «Развернуть панель» (стрелка «>» на узкой полосе слева)
   await expand.click();
 
   // Ожидание 2: поле «Фильтр по имени или #тегу…» снова видно

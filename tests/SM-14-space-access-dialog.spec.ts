@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { activeSpaces, spaceCard } from './support/projects';
 
 test('SM-14 «+» у участников → «Управление доступом»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
@@ -10,7 +11,7 @@ test('SM-14 «+» у участников → «Управление досту�
   await page.getByRole('button', { name: /^Показать ещё/ }).click({ timeout: 60_000 });
 
   // Шаг 2. На карточке пространства прогона нажать «+» рядом с участниками (у «+» название «Пользователи и права»)
-  const card = page.locator('#active-spaces [data-slot="card"]').filter({ has: page.getByRole('heading', { name, exact: true }) });
+  const card = spaceCard(activeSpaces(page), name);
   await card.getByRole('button', { name: 'Пользователи и права' }).click();
 
   // Ожидание 1: открылось окно «Управление доступом — <название пространства прогона>»

@@ -14,6 +14,6 @@ test('SM-07 Поиск пространства', async ({ page }) => {
   await search.fill(name);
 
   // Ожидание: в группе «Пространства» есть пространство прогона
-  const spacesGroup = page.getByRole('paragraph').filter({ hasText: /^Пространства$/ }).locator('xpath=following-sibling::ul');
+  const spacesGroup = page.getByRole('list', { name: 'Пространства' });
   await expect(spacesGroup.getByRole('link', { name: new RegExp(`^${name} `) })).toBeVisible({ timeout: 30_000 });
 });

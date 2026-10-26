@@ -1,21 +1,19 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { navigatorButton, openSpace, treeItem } from './support/navigator';
+import { documentEditor, editorToolbarButton } from './support/editor';
 
 test('SM-132 «Версии»: сохранить и откатить', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
-  // Редактор текста — область с contenteditable (ролей у неё нет)
-  const editor = page.locator('[contenteditable="true"]');
-  // У кнопок панели инструментов редактора нет названий (подсказка видна только при наведении), находим по иконке.
-  // TODO для разработчиков: добавить кнопке «Версии» aria-label
-  const versionsButton = page.getByRole('main').getByRole('button').filter({ has: page.locator('svg.lucide-history') });
+  const editor = documentEditor(page);
+  const versionsButton = editorToolbarButton(page, 'Версии');
 
   await test.step('Предусловие (SM-76): создать свой документ TEST_SM132_Текст с текстом «строка один»', async () => {
     // Шаг 1. Открыть навигатор пространства прогона
-    await page.goto(url);
-    await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+    await openSpace(page, url);
     // Шаг 2. Нажать «+ Документ», ввести название «TEST_SM132_Текст», нажать «Создать»
-    await page.getByRole('main').getByRole('button', { name: 'Документ', exact: true }).click();
+    await navigatorButton(page, 'Документ').click();
     const createDialog = page.getByRole('dialog', { name: 'Создать документ' });
     await createDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM132_Текст');
     await createDialog.getByRole('button', { name: 'Создать' }).click();
@@ -27,7 +25,7 @@ test('SM-132 «Версии»: сохранить и откатить', async ({
   });
 
   // Шаг 1. Открыть TEST_SM132_Текст → «Версии» → «Сохранить версию»
-  await page.locator('[data-document-id]').filter({ hasText: 'TEST_SM132_Текст' }).click();
+  await treeItem(page, 'TEST_SM132_Текст').click();
   await expect(editor).toContainText('строка один');
   await versionsButton.click();
   const versionsDialog = page.getByRole('dialog');

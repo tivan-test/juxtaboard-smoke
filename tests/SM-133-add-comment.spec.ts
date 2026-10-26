@@ -1,18 +1,18 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { navigatorButton, openSpace, treeItem } from './support/navigator';
+import { documentEditor, editorToolbarButton } from './support/editor';
 
 test('SM-133 «Добавить комментарий»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
-  // Редактор текста — область с contenteditable (ролей у неё нет)
-  const editor = page.locator('[contenteditable="true"]');
+  const editor = documentEditor(page);
 
   await test.step('Предусловие (SM-76): создать свой документ TEST_SM133_Текст с текстом', async () => {
     // Шаг 1. Открыть навигатор пространства прогона
-    await page.goto(url);
-    await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+    await openSpace(page, url);
     // Шаг 2. Нажать «+ Документ», ввести название «TEST_SM133_Текст», нажать «Создать»
-    await page.getByRole('main').getByRole('button', { name: 'Документ', exact: true }).click();
+    await navigatorButton(page, 'Документ').click();
     const createDialog = page.getByRole('dialog', { name: 'Создать документ' });
     await createDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM133_Текст');
     await createDialog.getByRole('button', { name: 'Создать' }).click();
@@ -24,7 +24,7 @@ test('SM-133 «Добавить комментарий»', async ({ page }) => {
   });
 
   // Шаг 1. Открыть TEST_SM133_Текст, выделить слово «Проверка» (первые 8 букв первого абзаца)
-  await page.locator('[data-document-id]').filter({ hasText: 'TEST_SM133_Текст' }).click();
+  await treeItem(page, 'TEST_SM133_Текст').click();
   await expect(editor).toContainText('Проверка смоук текста 123');
   await editor.evaluate((el) => {
     const text = el.querySelector('p')!.firstChild!;
@@ -48,9 +48,7 @@ test('SM-133 «Добавить комментарий»', async ({ page }) => {
   // Шаг 4. Перезагрузить страницу, нажать «Комментарии»
   await page.reload();
   await expect(editor).toBeVisible({ timeout: 60_000 });
-  // У кнопки «Комментарии» нет названия (подсказка видна только при наведении), находим по иконке.
-  // TODO для разработчиков: добавить кнопке «Комментарии» aria-label
-  await page.getByRole('main').getByRole('button').filter({ has: page.locator('svg.lucide-message-circle') }).click();
+  await editorToolbarButton(page, 'Комментарии').click();
 
   // Ожидание: виден комментарий «TEST комментарий»
   await expect(page.getByText('TEST комментарий')).toBeVisible();

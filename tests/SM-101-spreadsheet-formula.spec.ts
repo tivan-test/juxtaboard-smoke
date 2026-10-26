@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { openSpace, treeItem } from './support/navigator';
 
 // Значение ячейки рисуется на canvas и в DOM его нет, поэтому читаем его через копирование ячейки в буфер обмена
 test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
@@ -7,12 +8,11 @@ test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
 test('SM-101 Формула «=2+3»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
-  const sheetRow = page.locator('[data-document-id]').filter({ hasText: 'TEST_SM101_Электронная' });
+  const sheetItem = treeItem(page, 'TEST_SM101_Электронная');
 
   await test.step('Предусловие (SM-100): создать свою электронную таблицу TEST_SM101_Электронная', async () => {
     // Шаг 1. Открыть навигатор пространства прогона
-    await page.goto(url);
-    await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+    await openSpace(page, url);
     // Шаг 2. Стрелка ▾ у «+ Документ» → «Новая электронная таблица», ввести «TEST_SM101_Электронная», нажать «Создать»
     // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим
     await page.getByRole('main').getByRole('button', { name: 'Новая таблица данных' }).click();
@@ -20,12 +20,12 @@ test('SM-101 Формула «=2+3»', async ({ page }) => {
     const createDialog = page.getByRole('dialog', { name: 'Новая электронная таблица' });
     await createDialog.getByRole('textbox', { name: 'Название электронной таблицы' }).fill('TEST_SM101_Электронная');
     await createDialog.getByRole('button', { name: 'Создать' }).click();
-    await expect(sheetRow).toBeVisible();
+    await expect(sheetItem).toBeVisible();
   });
 
   // Шаг 1. Открыть TEST_SM101_Электронная
   // Электронная таблица после создания сама не открывается, поэтому нажимаем на неё в дереве
-  await sheetRow.click();
+  await sheetItem.click();
   await expect(page.getByRole('tab', { name: 'Sheet1' })).toBeVisible({ timeout: 30_000 });
 
   // Шаг 2. В ячейку A1 ввести «=2+3», нажать Enter

@@ -5,6 +5,7 @@ test('SM-31 Тёмная тема и возврат', async ({ page }) => {
   const menu = page.getByRole('dialog');
   const themes = ['Системная', 'Светлая', 'Тёмная'];
   // Тему страницы видно по свойству color-scheme у <html>
+  // eslint-disable-next-line playwright/no-raw-locators -- тема — свойство корня документа, у <html> нет роли
   const html = page.locator('html');
 
   // Шаг 1. Открыть /projects → кнопка профиля, запомнить выбранную тему в «Оформление»

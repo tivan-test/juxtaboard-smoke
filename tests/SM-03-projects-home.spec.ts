@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { activeSpaces } from './support/projects';
 
 test('SM-03 Главный экран', async ({ page }) => {
   // Шаг 1. Открыть /projects
@@ -15,7 +16,10 @@ test('SM-03 Главный экран', async ({ page }) => {
   await expect(page.getByRole('textbox', { name: 'Название пространства или документа…' })).toBeVisible();
 
   // Ожидание 4: на карточках видны кнопки «Навигатор», «Схема», «Автоматизации»
-  await expect(page.getByRole('button', { name: 'Навигатор', exact: true }).first()).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Схема', exact: true }).first()).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Автоматизации', exact: true }).first()).toBeVisible();
+  // («Схема» и «Автоматизации» есть только на карточках, где пользователь владелец)
+  for (const name of ['Навигатор', 'Схема', 'Автоматизации']) {
+    const buttons = activeSpaces(page).getByRole('button', { name, exact: true });
+    await expect(buttons, `на карточках есть «${name}»`).not.toHaveCount(0);
+    for (const button of await buttons.all()) await expect(button).toBeVisible();
+  }
 });

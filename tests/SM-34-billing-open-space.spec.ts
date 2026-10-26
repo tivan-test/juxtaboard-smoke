@@ -7,7 +7,7 @@ test('SM-34 Переход из оплаты в проект', async ({ page }) 
 
   // Шаг 1. Открыть /account/billing
   await page.goto('/account/billing');
-  const paidProjects = page.getByRole('heading', { name: 'Проекты, которые вы оплачиваете' }).locator('xpath=following-sibling::ul');
+  const paidProjects = page.getByRole('list', { name: 'Проекты, которые вы оплачиваете' });
 
   // Шаг 2. В «Проекты, которые вы оплачиваете» нажать пространство прогона
   await paidProjects.getByRole('link', { name, exact: true }).click({ timeout: 60_000 });

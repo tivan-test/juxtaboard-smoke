@@ -1,15 +1,17 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { docTree, navigatorButton, openSpace, treeItem } from './support/navigator';
+import { documentEditor } from './support/editor';
 
 test('SM-131 «Режим сортировки»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
   const panel = page.getByRole('main');
-  // Строки документов в дереве: у них нет роли, берём по атрибуту data-document-id
-  const treeRows = page.locator('[data-document-id]');
+  // Элементы дерева документов в порядке показа
+  const treeItems = docTree(page).getByRole('treeitem');
   // Порядок в дереве: true, если обе строки найдены и «первая» стоит выше «второй»
   const isAbove = async (first: string, second: string) => {
-    const texts = await treeRows.allInnerTexts();
+    const texts = await treeItems.allInnerTexts();
     const indexFirst = texts.findIndex((t) => t.includes(first));
     const indexSecond = texts.findIndex((t) => t.includes(second));
     return indexFirst >= 0 && indexSecond > indexFirst;
@@ -17,23 +19,21 @@ test('SM-131 «Режим сортировки»', async ({ page }) => {
 
   await test.step('Предусловие (SM-76): создать свои документы TEST_SM131_Б и затем TEST_SM131_А', async () => {
     // Шаг 1. Открыть навигатор пространства прогона
-    await page.goto(url);
-    await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+    await openSpace(page, url);
     for (const docName of ['TEST_SM131_Б', 'TEST_SM131_А']) {
       // Шаг 2. Нажать «+ Документ», ввести название, нажать «Создать»
-      await panel.getByRole('button', { name: 'Документ', exact: true }).click();
+      await navigatorButton(page, 'Документ').click();
       const createDialog = page.getByRole('dialog', { name: 'Создать документ' });
       await createDialog.getByRole('textbox', { name: 'Название документа' }).fill(docName);
       await createDialog.getByRole('button', { name: 'Создать' }).click();
-      await expect(page.locator('[contenteditable="true"]')).toBeVisible({ timeout: 30_000 });
-      await expect(treeRows.filter({ hasText: docName })).toBeVisible();
+      await expect(documentEditor(page)).toBeVisible({ timeout: 30_000 });
+      await expect(treeItem(page, docName)).toBeVisible();
     }
   });
 
   // Шаг 1. Открыть навигатор пространства прогона
-  await page.goto(url);
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
-  await expect(treeRows.filter({ hasText: 'TEST_SM131_А' })).toBeVisible();
+  await openSpace(page, url);
+  await expect(treeItem(page, 'TEST_SM131_А')).toBeVisible();
 
   // Шаг 2. «Режим сортировки» (⋮ у фильтра) → «Сортировка А–Я»
   await panel.getByRole('button', { name: 'Режим сортировки' }).click();

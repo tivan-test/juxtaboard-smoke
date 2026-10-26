@@ -1,17 +1,17 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { openSpace } from './support/navigator';
 
 test('SM-129 «Настроить столбцы»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
   const panel = page.getByRole('main');
-  // Пока открыто меню столбцов, вся страница помечена как скрытая для доступности (aria-hidden),
-  // поэтому поиск по ролям внутри панели не работает. Заголовок столбца ищем по тексту в thead.
-  const createdColumn = page.locator('thead').getByText('Создан', { exact: true });
+  // Пока открыто меню столбцов, остальная страница помечена скрытой для доступности (aria-hidden),
+  // поэтому заголовок столбца ищем с includeHidden; видимость на экране toBeVisible проверяет сам
+  const createdColumn = page.getByRole('columnheader', { name: 'Создан', exact: true, includeHidden: true });
 
   // Шаг 1. «Все файлы» → «Список» → «Настроить столбцы»
-  await page.goto(url);
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+  await openSpace(page, url);
   await panel.getByRole('button', { name: 'Все файлы' }).click();
   await panel.getByRole('button', { name: 'Список', exact: true }).click();
   await expect(createdColumn).toBeVisible();

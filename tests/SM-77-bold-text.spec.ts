@@ -1,17 +1,18 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { navigatorButton, openSpace, treeItem } from './support/navigator';
+import { documentEditor } from './support/editor';
 
 test('SM-77 Жирный шрифт', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
-  const editor = page.locator('[contenteditable="true"]');
+  const editor = documentEditor(page);
 
   await test.step('Предусловие (SM-76): создать свой документ TEST_SM77_Текст с текстом', async () => {
     // Шаг 1. Открыть навигатор пространства прогона
-    await page.goto(url);
-    await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+    await openSpace(page, url);
     // Шаг 2. Нажать «+ Документ», ввести название «TEST_SM77_Текст», нажать «Создать»
-    await page.getByRole('main').getByRole('button', { name: 'Документ', exact: true }).click();
+    await navigatorButton(page, 'Документ').click();
     const createDialog = page.getByRole('dialog', { name: 'Создать документ' });
     await createDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM77_Текст');
     await createDialog.getByRole('button', { name: 'Создать' }).click();
@@ -22,7 +23,7 @@ test('SM-77 Жирный шрифт', async ({ page }) => {
   });
 
   // Шаг 1. Открыть TEST_SM77_Текст
-  await page.locator('[data-document-id]').filter({ hasText: 'TEST_SM77_Текст' }).click();
+  await treeItem(page, 'TEST_SM77_Текст').click();
   await expect(editor).toContainText('Проверка смоук текста 123');
 
   // Шаг 2. Выделить слово «Проверка» (первые 8 букв первого абзаца)
@@ -39,6 +40,6 @@ test('SM-77 Жирный шрифт', async ({ page }) => {
   // Шаг 3. Нажать Ctrl+B (на Mac — Cmd+B)
   await page.keyboard.press('ControlOrMeta+b');
 
-  // Ожидание: слово «Проверка» жирное
-  await expect(editor.locator('strong', { hasText: 'Проверка' })).toHaveText('Проверка');
+  // Ожидание: слово «Проверка» жирное (жирный текст редактора — <strong>, роль strong)
+  await expect(editor.getByRole('strong')).toHaveText('Проверка');
 });

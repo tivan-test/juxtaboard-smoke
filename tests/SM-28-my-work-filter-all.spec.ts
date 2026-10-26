@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test('SM-28 Фильтр «Все» в «Мои задачи»', async ({ page }) => {
-  // Строка задачи — кнопка, открывающая карточку задачи (aria-haspopup="dialog")
-  const taskItems = page.getByRole('main').locator('button[aria-haspopup="dialog"]');
+  // Задача — кнопка-строка в группе списка задач. Роли list/table у списка нет, группы — безымянные
+  // <section>; именованная <section> на странице — полоса очередей, её строки задачами не считаем
+  // eslint-disable-next-line playwright/no-raw-locators -- у списка задач (TaskList) нет роли и имени, строки отличает только безымянная группа-section
+  const taskItems = page.getByRole('main').locator('section:not([aria-label])').getByRole('button');
 
   // Шаг 1. Открыть /me/work
   await page.goto('/me/work');
@@ -13,7 +15,7 @@ test('SM-28 Фильтр «Все» в «Мои задачи»', async ({ page }
   await page.getByRole('button', { name: 'Все', exact: true }).click({ timeout: 60_000 });
 
   // Ожидание 1: виден хотя бы один элемент задачи
-  await expect(taskItems.first()).toBeVisible();
+  await expect(taskItems).not.toHaveCount(0);
   const allCount = await taskItems.count();
 
   // Шаг 3. Нажать фильтр «Открытые»

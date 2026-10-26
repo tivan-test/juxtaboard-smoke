@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { openSpace, treeItem } from './support/navigator';
 
 test('SM-102 Новый дашборд', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
-  const dashRow = page.locator('[data-document-id]').filter({ hasText: 'TEST_SM102_Дашборд' });
+  const dashItem = treeItem(page, 'TEST_SM102_Дашборд');
 
-  await page.goto(url);
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+  await openSpace(page, url);
 
   // Шаг 1. Стрелка ▾ у «+ Документ» → «Новый дашборд», ввести «TEST_SM102_Дашборд», нажать «Создать»
   // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим
@@ -18,7 +18,7 @@ test('SM-102 Новый дашборд', async ({ page }) => {
   await createDialog.getByRole('button', { name: 'Создать' }).click();
 
   // Шаг 2. Нажать «TEST_SM102_Дашборд» в дереве (после создания он сам не открывается)
-  await dashRow.click();
+  await dashItem.click();
 
   // Шаг 3. Нажать «Начать редактирование»
   await page.getByRole('button', { name: 'Начать редактирование' }).click();

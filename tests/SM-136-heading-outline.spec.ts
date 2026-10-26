@@ -1,21 +1,19 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { navigatorButton, openSpace, treeItem } from './support/navigator';
+import { documentEditor, editorToolbarButton } from './support/editor';
 
 test('SM-136 «Стиль абзаца» и «Структура документа»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
-  // Редактор текста — область с contenteditable (ролей у неё нет)
-  const editor = page.locator('[contenteditable="true"]');
-  // У кнопки «Структура документа» нет названия (подсказка видна только при наведении), находим по иконке.
-  // TODO для разработчиков: добавить кнопке «Структура документа» aria-label
-  const outlineButton = page.getByRole('main').getByRole('button').filter({ has: page.locator('svg.lucide-book-open') });
+  const editor = documentEditor(page);
+  const outlineButton = editorToolbarButton(page, 'Структура документа');
 
   await test.step('Предусловие (SM-76): создать свой документ TEST_SM136_Текст', async () => {
     // Шаг 1. Открыть навигатор пространства прогона
-    await page.goto(url);
-    await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+    await openSpace(page, url);
     // Шаг 2. Нажать «+ Документ», ввести название «TEST_SM136_Текст», нажать «Создать»
-    await page.getByRole('main').getByRole('button', { name: 'Документ', exact: true }).click();
+    await navigatorButton(page, 'Документ').click();
     const createDialog = page.getByRole('dialog', { name: 'Создать документ' });
     await createDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM136_Текст');
     await createDialog.getByRole('button', { name: 'Создать' }).click();
@@ -23,7 +21,7 @@ test('SM-136 «Стиль абзаца» и «Структура докумен�
   });
 
   // Шаг 1. Открыть TEST_SM136_Текст, поставить курсор в новую строку (документ пустой — просто клик в редактор)
-  await page.locator('[data-document-id]').filter({ hasText: 'TEST_SM136_Текст' }).click();
+  await treeItem(page, 'TEST_SM136_Текст').click();
   await expect(editor).toBeVisible();
   await editor.click();
 
@@ -31,7 +29,7 @@ test('SM-136 «Стиль абзаца» и «Структура докумен�
   await page.getByRole('button', { name: 'Стиль абзаца' }).click();
   await page.getByRole('menuitem', { name: 'Заголовок 1', exact: true }).click();
   await page.keyboard.type('TEST заголовок');
-  await expect(editor.locator('h1')).toHaveText('TEST заголовок');
+  await expect(editor.getByRole('heading', { level: 1 })).toHaveText('TEST заголовок');
 
   // Шаг 3. Нажать «Структура документа»
   await outlineButton.click();

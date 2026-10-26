@@ -1,16 +1,15 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { docTree, navigatorButton, openSpace, treeFilter, treeItem } from './support/navigator';
 
 test('SM-122 Тег при создании и фильтр #тег', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
-  // Редактор текста — область с contenteditable (ролей у неё нет)
-  const editor = page.locator('[contenteditable="true"]');
+  const editor = page.getByRole('textbox', { name: 'Текст документа' });
 
   // Шаг 1. Открыть навигатор пространства прогона, нажать «+ Документ», ввести название «TEST_SM122_Тег»
-  await page.goto(url);
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
-  await page.getByRole('main').getByRole('button', { name: 'Документ', exact: true }).first().click();
+  await openSpace(page, url);
+  await navigatorButton(page, 'Документ').click();
   const createDialog = page.getByRole('dialog', { name: 'Создать документ' });
   await createDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM122_Тег');
 
@@ -27,9 +26,9 @@ test('SM-122 Тег при создании и фильтр #тег', async ({ p
   await page.reload();
 
   // Шаг 4. Ввести в «Фильтр по имени или #тегу…» «#TEST_sm122»
-  await page.getByRole('textbox', { name: 'Фильтр по имени или #тегу…' }).fill('#TEST_sm122');
+  await treeFilter(page).fill('#TEST_sm122');
 
   // Ожидание: в дереве только «TEST_SM122_Тег»
-  await expect(page.locator('[data-document-id]').filter({ hasText: 'TEST_SM122_Тег' })).toBeVisible({ timeout: 60_000 });
-  await expect(page.locator('[data-document-id], [data-folder-id]')).toHaveCount(1);
+  await expect(treeItem(page, 'TEST_SM122_Тег')).toBeVisible({ timeout: 60_000 });
+  await expect(docTree(page).getByRole('treeitem')).toHaveCount(1);
 });

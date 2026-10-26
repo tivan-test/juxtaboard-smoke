@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { navigatorButton, openSpace, treeItem } from './support/navigator';
+import { documentEditor } from './support/editor';
 
 test('SM-127 «Сортировка»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
@@ -16,16 +18,15 @@ test('SM-127 «Сортировка»', async ({ page }) => {
 
   await test.step('Предусловие (SM-76): создать свои документы TEST_SM127_А и затем TEST_SM127_Б', async () => {
     // Шаг 1. Открыть навигатор пространства прогона
-    await page.goto(url);
-    await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+    await openSpace(page, url);
     for (const docName of ['TEST_SM127_А', 'TEST_SM127_Б']) {
       // Шаг 2. Нажать «+ Документ», ввести название, нажать «Создать»
-      await panel.getByRole('button', { name: 'Документ', exact: true }).click();
+      await navigatorButton(page, 'Документ').click();
       const createDialog = page.getByRole('dialog', { name: 'Создать документ' });
       await createDialog.getByRole('textbox', { name: 'Название документа' }).fill(docName);
       await createDialog.getByRole('button', { name: 'Создать' }).click();
-      await expect(page.locator('[contenteditable="true"]')).toBeVisible({ timeout: 30_000 });
-      await expect(page.locator('[data-document-id]').filter({ hasText: docName })).toBeVisible();
+      await expect(documentEditor(page)).toBeVisible({ timeout: 30_000 });
+      await expect(treeItem(page, docName)).toBeVisible();
     }
   });
 

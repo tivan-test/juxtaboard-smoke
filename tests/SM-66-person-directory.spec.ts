@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { openSpace } from './support/navigator';
 
 test('SM-66 Справочник сотрудников', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
   // Шаг 1. Открыть навигатор пространства прогона → «Структуры проекта» → «Справочники сотрудников»
-  await page.goto(url);
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+  await openSpace(page, url);
   await page.getByRole('banner').getByRole('button', { name: 'Структуры проекта' }).click();
   await page.getByRole('dialog').getByRole('link', { name: 'Справочники сотрудников' }).click();
 
@@ -28,6 +28,7 @@ test('SM-66 Справочник сотрудников', async ({ page }) => {
   await page.getByRole('main').getByRole('link', { name: 'Открыть таблицу' }).click();
 
   // Ожидание 3: открылась таблица «TEST_SM66_Сотрудники» с меткой «Справочник людей»
+  // (название открытого документа навигатор ставит в начало заголовка вкладки: «<документ> — <пространство>»)
   await expect(page.getByText('Справочник людей')).toBeVisible({ timeout: 30_000 });
-  await expect(page.getByText('TEST_SM66_Сотрудники').first()).toBeVisible();
+  await expect(page).toHaveTitle(/^TEST_SM66_Сотрудники — /);
 });

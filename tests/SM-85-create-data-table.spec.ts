@@ -1,15 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
+import { openSpace, treeItem } from './support/navigator';
 
 test('SM-85 Новая таблица данных', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
-  // Строка дерева документов: у строк дерева нет роли, ищем по атрибуту data-document-id
-  const treeItem = page.locator('[data-document-id]').filter({ hasText: 'TEST_SM85_Таблица' });
 
   // Шаг 1. Открыть навигатор пространства прогона
-  await page.goto(url);
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+  await openSpace(page, url);
 
   // Шаг 2. Стрелка ▾ у «+ Документ» → «Новая таблица данных»
   // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим
@@ -22,5 +20,5 @@ test('SM-85 Новая таблица данных', async ({ page }) => {
   await createDialog.getByRole('button', { name: 'Создать' }).click();
 
   // Ожидание: в дереве есть «TEST_SM85_Таблица»
-  await expect(treeItem).toBeVisible();
+  await expect(treeItem(page, 'TEST_SM85_Таблица')).toBeVisible();
 });
