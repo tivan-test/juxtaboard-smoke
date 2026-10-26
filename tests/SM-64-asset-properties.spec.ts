@@ -21,24 +21,31 @@ test('SM-64 Альт-текст и теги ресурса', async ({ page }) =>
     await expect(card).toBeVisible();
   });
 
-  // Шаг 1. Открыть карточку TEST_SM64.png
-  await card.click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let saved;
 
-  // Шаг 2. Ввести «Альт-текст»: «TEST alt», «Теги»: «TEST_sm64»
-  await page.getByRole('textbox', { name: 'Альт-текст' }).fill('TEST alt');
-  await page.getByRole('textbox', { name: 'Теги (через запятую)' }).fill('TEST_sm64');
+  await test.step('Шаг 1. Открыть карточку TEST_SM64.png', async () => {
+    await card.click();
+  });
 
-  // Шаг 3. Нажать «Сохранить»
-  // Подтверждения на экране нет: ждём ответа сервера на сохранение карточки
-  const saved = page.waitForResponse((r) => r.request().method() === 'PATCH' && /\/assets\//.test(r.url()));
-  await page.getByRole('button', { name: 'Сохранить' }).click();
-  expect((await saved).ok()).toBe(true);
+  await test.step('Шаг 2. Ввести «Альт-текст»: «TEST alt», «Теги»: «TEST_sm64»', async () => {
+    await page.getByRole('textbox', { name: 'Альт-текст' }).fill('TEST alt');
+    await page.getByRole('textbox', { name: 'Теги (через запятую)' }).fill('TEST_sm64');
+  });
 
-  // Шаг 4. Перезагрузить страницу и открыть карточку TEST_SM64.png
-  await page.reload();
-  await card.click({ timeout: 60_000 });
+  await test.step('Шаг 3. Нажать «Сохранить»', async () => {
+    // Подтверждения на экране нет: ждём ответа сервера на сохранение карточки
+    saved = page.waitForResponse((r) => r.request().method() === 'PATCH' && /\/assets\//.test(r.url()));
+    await page.getByRole('button', { name: 'Сохранить' }).click();
+    expect((await saved).ok()).toBe(true);
+  });
 
-  // Ожидание: в «Альт-текст» «TEST alt», в «Теги» «TEST_sm64»
-  await expect(page.getByRole('textbox', { name: 'Альт-текст' })).toHaveValue('TEST alt');
-  await expect(page.getByRole('textbox', { name: 'Теги (через запятую)' })).toHaveValue('TEST_sm64');
+  await test.step('Шаг 4. Перезагрузить страницу и открыть карточку TEST_SM64.png', async () => {
+    await page.reload();
+    await card.click({ timeout: 60_000 });
+
+    // Ожидание: в «Альт-текст» «TEST alt», в «Теги» «TEST_sm64»
+    await expect(page.getByRole('textbox', { name: 'Альт-текст' })).toHaveValue('TEST alt');
+    await expect(page.getByRole('textbox', { name: 'Теги (через запятую)' })).toHaveValue('TEST_sm64');
+  });
 });

@@ -20,19 +20,24 @@ test('SM-115 ⋮ → «Создать» → «Добавить дочерний 
     await expect(parent).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM115_Родитель → «Создать» → «Добавить дочерний документ»
-  await openTreeItemActions(parent);
-  await page.getByRole('menuitem', { name: 'Создать' }).hover();
-  await page.getByRole('menu', { name: 'Создать' }).getByRole('menuitem', { name: 'Добавить дочерний документ' }).click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let childDialog;
 
-  // Шаг 2. Ввести «TEST_SM115_Дочерний», нажать «Создать»
-  const childDialog = page.getByRole('dialog', { name: 'Создать документ' });
-  await childDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM115_Дочерний');
-  await childDialog.getByRole('button', { name: 'Создать' }).click();
-  await expect(childDialog).toBeHidden();
+  await test.step('Шаг 1. ⋮ у TEST_SM115_Родитель → «Создать» → «Добавить дочерний документ»', async () => {
+    await openTreeItemActions(parent);
+    await page.getByRole('menuitem', { name: 'Создать' }).hover();
+    await page.getByRole('menu', { name: 'Создать' }).getByRole('menuitem', { name: 'Добавить дочерний документ' }).click();
+  });
 
-  // Родитель раскрывается сам после создания дочернего документа, поэтому отдельного шага «Раскрыть» нет
+  await test.step('Шаг 2. Ввести «TEST_SM115_Дочерний», нажать «Создать»', async () => {
+    childDialog = page.getByRole('dialog', { name: 'Создать документ' });
+    await childDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM115_Дочерний');
+    await childDialog.getByRole('button', { name: 'Создать' }).click();
+    await expect(childDialog).toBeHidden();
 
-  // Ожидание: «TEST_SM115_Дочерний» в дереве внутри TEST_SM115_Родитель
-  await expect(childTreeItem(parent, 'TEST_SM115_Дочерний')).toBeVisible();
+    // Родитель раскрывается сам после создания дочернего документа, поэтому отдельного шага «Раскрыть» нет
+
+    // Ожидание: «TEST_SM115_Дочерний» в дереве внутри TEST_SM115_Родитель
+    await expect(childTreeItem(parent, 'TEST_SM115_Дочерний')).toBeVisible();
+  });
 });

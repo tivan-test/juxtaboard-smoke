@@ -20,26 +20,30 @@ test('SM-121 Архив и восстановление документа', asy
     await expect(doc).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM121_Текст → «Архивировать»
-  await openTreeItemActions(doc);
-  await page.getByRole('menuitem', { name: 'Архивировать' }).click();
+  await test.step('Шаг 1. ⋮ у TEST_SM121_Текст → «Архивировать»', async () => {
+    await openTreeItemActions(doc);
+    await page.getByRole('menuitem', { name: 'Архивировать' }).click();
 
-  // Ожидание 1: TEST_SM121_Текст нет в дереве
-  await expect(doc).toHaveCount(0);
+    // Ожидание 1: TEST_SM121_Текст нет в дереве
+    await expect(doc).toHaveCount(0);
+  });
 
-  // Шаг 2. «Режимы отображения» → «Архив»
-  await chooseViewMode(page, 'Архив');
+  await test.step('Шаг 2. «Режимы отображения» → «Архив»', async () => {
+    await chooseViewMode(page, 'Архив');
 
-  // Ожидание 2: TEST_SM121_Текст есть в архиве
-  await expect(doc).toBeVisible();
+    // Ожидание 2: TEST_SM121_Текст есть в архиве
+    await expect(doc).toBeVisible();
+  });
 
-  // Шаг 3. ⋮ у TEST_SM121_Текст в архиве → «Восстановить» (только «Восстановить», «Удалить навсегда» не трогаем)
-  await openTreeItemActions(doc);
-  await page.getByRole('menuitem', { name: 'Восстановить' }).click();
+  await test.step('Шаг 3. ⋮ у TEST_SM121_Текст в архиве → «Восстановить»', async () => {
+    await openTreeItemActions(doc);
+    await page.getByRole('menuitem', { name: 'Восстановить' }).click();
+  });
 
-  // Шаг 4. «Режимы отображения» → «Документы»
-  await chooseViewMode(page, 'Документы');
+  await test.step('Шаг 4. «Режимы отображения» → «Документы»', async () => {
+    await chooseViewMode(page, 'Документы');
 
-  // Ожидание 3: TEST_SM121_Текст снова в дереве
-  await expect(doc).toBeVisible();
+    // Ожидание 3: TEST_SM121_Текст снова в дереве
+    await expect(doc).toBeVisible();
+  });
 });

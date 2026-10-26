@@ -1,21 +1,27 @@
 import { test, expect } from '@playwright/test';
 
 test('SM-09 Очистка поиска', async ({ page }) => {
-  // Шаг 1. Открыть /projects
-  await page.goto('/projects');
-  const search = page.getByRole('textbox', { name: 'Название пространства или документа…' });
-  await expect(search).toBeVisible({ timeout: 60_000 });
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let search;
 
-  // Шаг 2. Ввести в поиск «qqzzxx999»
-  await search.fill('qqzzxx999');
-  await expect(page.getByText('Ничего не найдено')).toBeVisible({ timeout: 30_000 });
+  await test.step('Шаг 1. Открыть /projects', async () => {
+    await page.goto('/projects');
+    search = page.getByRole('textbox', { name: 'Название пространства или документа…' });
+    await expect(search).toBeVisible({ timeout: 60_000 });
+  });
 
-  // Шаг 3. Нажать крестик в поле (у крестика английское название «Clear»)
-  await page.getByRole('button', { name: 'Clear' }).click();
+  await test.step('Шаг 2. Ввести в поиск «qqzzxx999»', async () => {
+    await search.fill('qqzzxx999');
+    await expect(page.getByText('Ничего не найдено')).toBeVisible({ timeout: 30_000 });
+  });
 
-  // Ожидание 1: поле поиска пустое
-  await expect(search).toHaveValue('');
+  await test.step('Шаг 3. Нажать крестик в поле', async () => {
+    await page.getByRole('button', { name: 'Clear' }).click();
 
-  // Ожидание 2: надписи «Ничего не найдено» нет
-  await expect(page.getByText('Ничего не найдено')).toBeHidden();
+    // Ожидание 1: поле поиска пустое
+    await expect(search).toHaveValue('');
+
+    // Ожидание 2: надписи «Ничего не найдено» нет
+    await expect(page.getByText('Ничего не найдено')).toBeHidden();
+  });
 });

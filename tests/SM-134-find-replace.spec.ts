@@ -25,29 +25,33 @@ test('SM-134 «Найти / Заменить»', async ({ page }) => {
     await expect(editor).toContainText('строка один');
   });
 
-  // Шаг 1. Открыть TEST_SM134_Текст → «Найти / Заменить»
-  await treeItem(page, 'TEST_SM134_Текст').click();
-  await expect(editor).toContainText('строка один');
-  await searchButton.click();
+  await test.step('Шаг 1. Открыть TEST_SM134_Текст → «Найти / Заменить»', async () => {
+    await treeItem(page, 'TEST_SM134_Текст').click();
+    await expect(editor).toContainText('строка один');
+    await searchButton.click();
+  });
 
-  // Шаг 2. Ввести «один»
-  await page.getByRole('textbox', { name: 'Найти…' }).fill('один');
+  await test.step('Шаг 2. Ввести «один»', async () => {
+    await page.getByRole('textbox', { name: 'Найти…' }).fill('один');
 
-  // Ожидание 1: видно «1 / 1»
-  await expect(page.getByText('1 / 1')).toBeVisible();
+    // Ожидание 1: видно «1 / 1»
+    await expect(page.getByText('1 / 1')).toBeVisible();
+  });
 
-  // Шаг 3. Вкладка «Заменить», ввести «1», нажать «Заменить» (кнопка называется «Заменить текущее»)
-  await page.getByRole('button', { name: 'Заменить', exact: true }).click();
-  await page.getByRole('textbox', { name: 'Заменить на…' }).fill('1');
-  await page.getByRole('button', { name: 'Заменить текущее' }).click();
+  await test.step('Шаг 3. Вкладка «Заменить», ввести «1», нажать «Заменить»', async () => {
+    await page.getByRole('button', { name: 'Заменить', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Заменить на…' }).fill('1');
+    await page.getByRole('button', { name: 'Заменить текущее' }).click();
 
-  // Ожидание 2: в документе «строка 1»
-  await expect(editor).toContainText('строка 1');
+    // Ожидание 2: в документе «строка 1»
+    await expect(editor).toContainText('строка 1');
+  });
 
-  // Шаг 4. Закрыть поиск, нажать «Отменить» (↶) на панели редактора
-  await page.getByRole('button', { name: 'Закрыть (Esc)' }).click();
-  await editorToolbarButton(page, 'Отменить').click();
+  await test.step('Шаг 4. Закрыть поиск, нажать «Отменить» (↶) на панели редактора', async () => {
+    await page.getByRole('button', { name: 'Закрыть (Esc)' }).click();
+    await editorToolbarButton(page, 'Отменить').click();
 
-  // Ожидание 3: в документе «строка один»
-  await expect(editor).toContainText('строка один');
+    // Ожидание 3: в документе «строка один»
+    await expect(editor).toContainText('строка один');
+  });
 });

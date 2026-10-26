@@ -5,22 +5,25 @@ test('SM-32 Язык EN и возврат на RU', async ({ page }) => {
   const menu = page.getByRole('dialog');
   const pageTitle = page.getByRole('main').getByRole('heading', { level: 1 });
 
-  // Шаг 1. Открыть /projects → кнопка профиля
-  await page.goto('/projects');
-  await expect(pageTitle).toHaveText('Пространства', { timeout: 60_000 });
-  await profileButton.click();
+  await test.step('Шаг 1. Открыть /projects → кнопка профиля', async () => {
+    await page.goto('/projects');
+    await expect(pageTitle).toHaveText('Пространства', { timeout: 60_000 });
+    await profileButton.click();
+  });
 
-  // Шаг 2. В «Язык интерфейса» выбрать «EN»
-  await menu.getByRole('button', { name: 'EN', exact: true }).click();
+  await test.step('Шаг 2. В «Язык интерфейса» выбрать «EN»', async () => {
+    await menu.getByRole('button', { name: 'EN', exact: true }).click();
 
-  // Ожидание 1: заголовок «Пространства» сменился английским
-  await expect(pageTitle).toHaveText(/^[A-Za-z ]+$/);
+    // Ожидание 1: заголовок «Пространства» сменился английским
+    await expect(pageTitle).toHaveText(/^[A-Za-z ]+$/);
+  });
 
-  // Шаг 3. Кнопка профиля → «Язык интерфейса» → «RU»
-  await page.keyboard.press('Escape');
-  await profileButton.click();
-  await menu.getByRole('button', { name: 'RU', exact: true }).click();
+  await test.step('Шаг 3. Кнопка профиля → «Язык интерфейса» → «RU»', async () => {
+    await page.keyboard.press('Escape');
+    await profileButton.click();
+    await menu.getByRole('button', { name: 'RU', exact: true }).click();
 
-  // Ожидание 2: снова виден заголовок «Пространства»
-  await expect(pageTitle).toHaveText('Пространства');
+    // Ожидание 2: снова виден заголовок «Пространства»
+    await expect(pageTitle).toHaveText('Пространства');
+  });
 });

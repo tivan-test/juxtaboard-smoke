@@ -16,22 +16,27 @@ test('SM-112 Поиск папки с главной', async ({ page }) => {
     await expect(treeItem(page, 'TEST_SM112_Папка')).toBeVisible();
   });
 
-  // Шаг 1. Открыть /projects, ввести в поиск «TEST_SM112»
-  await page.goto('/projects');
-  const search = page.getByRole('textbox', { name: 'Название пространства или документа…' });
-  await expect(search).toBeVisible({ timeout: 60_000 });
-  await search.fill('TEST_SM112');
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let search, docsGroup, result;
 
-  // Ожидание 1: «TEST_SM112_Папка» в группе «Документы», под ней название пространства прогона
-  // (название ссылки состоит из названия папки и названия пространства)
-  const docsGroup = page.getByRole('list', { name: 'Документы' });
-  const result = docsGroup.getByRole('link', { name: `TEST_SM112_Папка ${name}`, exact: true });
-  await expect(result).toBeVisible({ timeout: 30_000 });
+  await test.step('Шаг 1. Открыть /projects, ввести в поиск «TEST_SM112»', async () => {
+    await page.goto('/projects');
+    search = page.getByRole('textbox', { name: 'Название пространства или документа…' });
+    await expect(search).toBeVisible({ timeout: 60_000 });
+    await search.fill('TEST_SM112');
 
-  // Шаг 2. Нажать найденную «TEST_SM112_Папка»
-  await result.click();
+    // Ожидание 1: «TEST_SM112_Папка» в группе «Документы», под ней название пространства прогона
+    // (название ссылки состоит из названия папки и названия пространства)
+    docsGroup = page.getByRole('list', { name: 'Документы' });
+    result = docsGroup.getByRole('link', { name: `TEST_SM112_Папка ${name}`, exact: true });
+    await expect(result).toBeVisible({ timeout: 30_000 });
+  });
 
-  // Ожидание 2: открылся навигатор пространства прогона, видно название «TEST_SM112_Папка»
-  await expect(page).toHaveURL(/\/projects\/[^/]+\/navigator/, { timeout: 60_000 });
-  await expect(treeItem(page, 'TEST_SM112_Папка')).toBeVisible({ timeout: 60_000 });
+  await test.step('Шаг 2. Нажать найденную «TEST_SM112_Папка»', async () => {
+    await result.click();
+
+    // Ожидание 2: открылся навигатор пространства прогона, видно название «TEST_SM112_Папка»
+    await expect(page).toHaveURL(/\/projects\/[^/]+\/navigator/, { timeout: 60_000 });
+    await expect(treeItem(page, 'TEST_SM112_Папка')).toBeVisible({ timeout: 60_000 });
+  });
 });

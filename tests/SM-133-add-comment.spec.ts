@@ -23,33 +23,40 @@ test('SM-133 «Добавить комментарий»', async ({ page }) => {
     await expect(editor).toContainText('Проверка смоук текста 123');
   });
 
-  // Шаг 1. Открыть TEST_SM133_Текст, выделить слово «Проверка» (первые 8 букв первого абзаца)
-  await treeItem(page, 'TEST_SM133_Текст').click();
-  await expect(editor).toContainText('Проверка смоук текста 123');
-  await editor.evaluate((el) => {
-    const text = el.querySelector('p')!.firstChild!;
-    const range = document.createRange();
-    range.setStart(text, 0);
-    range.setEnd(text, 'Проверка'.length);
-    const selection = window.getSelection()!;
-    selection.removeAllRanges();
-    selection.addRange(range);
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let saved;
+
+  await test.step('Шаг 1. Открыть TEST_SM133_Текст, выделить слово «Проверка»', async () => {
+    await treeItem(page, 'TEST_SM133_Текст').click();
+    await expect(editor).toContainText('Проверка смоук текста 123');
+    await editor.evaluate((el) => {
+      const text = el.querySelector('p')!.firstChild!;
+      const range = document.createRange();
+      range.setStart(text, 0);
+      range.setEnd(text, 'Проверка'.length);
+      const selection = window.getSelection()!;
+      selection.removeAllRanges();
+      selection.addRange(range);
+    });
   });
 
-  // Шаг 2. Во всплывающей панели нажать «Добавить комментарий»
-  await page.getByRole('button', { name: 'Добавить комментарий' }).click();
+  await test.step('Шаг 2. Во всплывающей панели нажать «Добавить комментарий»', async () => {
+    await page.getByRole('button', { name: 'Добавить комментарий' }).click();
+  });
 
-  // Шаг 3. Ввести «TEST комментарий», нажать «Добавить» (ждём ответ сервера о сохранении)
-  await page.getByPlaceholder(/Ответить команде/).fill('TEST комментарий');
-  const saved = page.waitForResponse((r) => r.request().method() === 'POST' && /\/documents\/\d+\/comments/.test(r.url()));
-  await page.getByRole('button', { name: 'Добавить', exact: true }).click();
-  expect((await saved).ok()).toBe(true);
+  await test.step('Шаг 3. Ввести «TEST комментарий», нажать «Добавить»', async () => {
+    await page.getByPlaceholder(/Ответить команде/).fill('TEST комментарий');
+    saved = page.waitForResponse((r) => r.request().method() === 'POST' && /\/documents\/\d+\/comments/.test(r.url()));
+    await page.getByRole('button', { name: 'Добавить', exact: true }).click();
+    expect((await saved).ok()).toBe(true);
+  });
 
-  // Шаг 4. Перезагрузить страницу, нажать «Комментарии»
-  await page.reload();
-  await expect(editor).toBeVisible({ timeout: 60_000 });
-  await editorToolbarButton(page, 'Комментарии').click();
+  await test.step('Шаг 4. Перезагрузить страницу, нажать «Комментарии»', async () => {
+    await page.reload();
+    await expect(editor).toBeVisible({ timeout: 60_000 });
+    await editorToolbarButton(page, 'Комментарии').click();
 
-  // Ожидание: виден комментарий «TEST комментарий»
-  await expect(page.getByText('TEST комментарий')).toBeVisible();
+    // Ожидание: виден комментарий «TEST комментарий»
+    await expect(page.getByText('TEST комментарий')).toBeVisible();
+  });
 });

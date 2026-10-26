@@ -13,26 +13,32 @@ test('SM-87 Новая строка', async ({ page }) => {
     await setUpDataTable(page, url, { name: 'TEST_SM87_Таблица', withTitleColumn: true });
   });
 
-  // Шаг 1. Открыть TEST_SM87_Таблица
-  await treeItem(page, 'TEST_SM87_Таблица').click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let row, cell;
 
-  // Шаг 2. Нажать «Добавить строку», ввести в «Название» «Строка смоук», нажать Enter
-  const row = await addRow(page);
-  // Двойной клик по ячейке открывает ввод, фокус сразу в нём
-  const cell = await gridCell(grid, row, 'Название');
-  await cell.dblclick();
-  await page.keyboard.type('Строка смоук');
-  await page.keyboard.press('Enter');
-  // Ждём, пока значение появится в ячейке (запись сохранена), и только потом перезагружаем
-  await expect(cell).toContainText('Строка смоук');
+  await test.step('Шаг 1. Открыть TEST_SM87_Таблица', async () => {
+    await treeItem(page, 'TEST_SM87_Таблица').click();
+  });
 
-  // Шаг 3. Перезагрузить страницу
-  await page.reload();
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+  await test.step('Шаг 2. Нажать «Добавить строку», ввести в «Название» «Строка смоук», нажать Enter', async () => {
+    row = await addRow(page);
+    // Двойной клик по ячейке открывает ввод, фокус сразу в нём
+    cell = await gridCell(grid, row, 'Название');
+    await cell.dblclick();
+    await page.keyboard.type('Строка смоук');
+    await page.keyboard.press('Enter');
+    // Ждём, пока значение появится в ячейке (запись сохранена), и только потом перезагружаем
+    await expect(cell).toContainText('Строка смоук');
+  });
 
-  // Ожидание 1: в строке «Строка смоук»
-  await expect(gridRow(grid, 'Строка смоук')).toBeVisible();
+  await test.step('Шаг 3. Перезагрузить страницу', async () => {
+    await page.reload();
+    await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
 
-  // Ожидание 2: размер таблицы «1×1»
-  await expect(main.getByText('1×1')).toBeVisible();
+    // Ожидание 1: в строке «Строка смоук»
+    await expect(gridRow(grid, 'Строка смоук')).toBeVisible();
+
+    // Ожидание 2: размер таблицы «1×1»
+    await expect(main.getByText('1×1')).toBeVisible();
+  });
 });

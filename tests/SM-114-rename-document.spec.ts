@@ -21,17 +21,22 @@ test('SM-114 ⋮ → «Редактировать»', async ({ page }) => {
     await expect(oldDoc).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM114_Текст → «Редактировать»
-  await openTreeItemActions(oldDoc);
-  await page.getByRole('menuitem', { name: 'Редактировать' }).click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let editDialog;
 
-  // Шаг 2. Ввести «TEST_SM114_Новое», нажать «Сохранить»
-  const editDialog = page.getByRole('dialog', { name: 'Редактировать документ' });
-  await editDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM114_Новое');
-  await editDialog.getByRole('button', { name: 'Сохранить' }).click();
+  await test.step('Шаг 1. ⋮ у TEST_SM114_Текст → «Редактировать»', async () => {
+    await openTreeItemActions(oldDoc);
+    await page.getByRole('menuitem', { name: 'Редактировать' }).click();
+  });
 
-  // Ожидание 1: в дереве «TEST_SM114_Новое»
-  await expect(newDoc).toBeVisible();
-  // Ожидание 2: «TEST_SM114_Текст» в дереве нет
-  await expect(oldDoc).toHaveCount(0);
+  await test.step('Шаг 2. Ввести «TEST_SM114_Новое», нажать «Сохранить»', async () => {
+    editDialog = page.getByRole('dialog', { name: 'Редактировать документ' });
+    await editDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM114_Новое');
+    await editDialog.getByRole('button', { name: 'Сохранить' }).click();
+
+    // Ожидание 1: в дереве «TEST_SM114_Новое»
+    await expect(newDoc).toBeVisible();
+    // Ожидание 2: «TEST_SM114_Текст» в дереве нет
+    await expect(oldDoc).toHaveCount(0);
+  });
 });

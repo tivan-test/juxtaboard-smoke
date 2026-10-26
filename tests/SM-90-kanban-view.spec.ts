@@ -31,26 +31,32 @@ test('SM-90 Вид «Канбан»', async ({ page }) => {
     await expect(statusCell).toContainText('Новый');
   });
 
-  // Шаг 1. Открыть TEST_SM90_Таблица
-  await treeItem(page, 'TEST_SM90_Таблица').click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let newLane, uncategorizedLane;
 
-  // Шаг 2. Вид «По умолчанию» → «Канбан»
-  await main.getByRole('button', { name: 'По умолчанию' }).click();
-  await page.getByRole('button', { name: 'Канбан', exact: true }).click();
+  await test.step('Шаг 1. Открыть TEST_SM90_Таблица', async () => {
+    await treeItem(page, 'TEST_SM90_Таблица').click();
+  });
 
-  // Шаг 3. «Группировать по» → «Статус»
-  await main.getByRole('button', { name: /^Группировать по/ }).click();
-  await page.getByRole('menuitem', { name: 'Статус', exact: true }).click();
+  await test.step('Шаг 2. Вид «По умолчанию» → «Канбан»', async () => {
+    await main.getByRole('button', { name: 'По умолчанию' }).click();
+    await page.getByRole('button', { name: 'Канбан', exact: true }).click();
+  });
 
-  // Ожидание 1: видны колонки «Новый», «Готово», «Без категории»
-  // Колонка канбана — группа (group), названная по значению
-  const newLane = main.getByRole('group', { name: 'Новый', exact: true });
-  const uncategorizedLane = main.getByRole('group', { name: 'Без категории', exact: true });
-  await expect(newLane).toBeVisible();
-  await expect(main.getByRole('group', { name: 'Готово', exact: true })).toBeVisible();
-  await expect(uncategorizedLane).toBeVisible();
+  await test.step('Шаг 3. «Группировать по» → «Статус»', async () => {
+    await main.getByRole('button', { name: /^Группировать по/ }).click();
+    await page.getByRole('menuitem', { name: 'Статус', exact: true }).click();
 
-  // Ожидание 2: карточка «Строка канбан» в колонке «Новый»
-  await expect(newLane.getByRole('button', { name: 'Строка канбан' })).toBeVisible();
-  await expect(uncategorizedLane.getByRole('button', { name: 'Строка канбан' })).toHaveCount(0);
+    // Ожидание 1: видны колонки «Новый», «Готово», «Без категории»
+    // Колонка канбана — группа (group), названная по значению
+    newLane = main.getByRole('group', { name: 'Новый', exact: true });
+    uncategorizedLane = main.getByRole('group', { name: 'Без категории', exact: true });
+    await expect(newLane).toBeVisible();
+    await expect(main.getByRole('group', { name: 'Готово', exact: true })).toBeVisible();
+    await expect(uncategorizedLane).toBeVisible();
+
+    // Ожидание 2: карточка «Строка канбан» в колонке «Новый»
+    await expect(newLane.getByRole('button', { name: 'Строка канбан' })).toBeVisible();
+    await expect(uncategorizedLane.getByRole('button', { name: 'Строка канбан' })).toHaveCount(0);
+  });
 });

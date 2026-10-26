@@ -19,19 +19,22 @@ test('SM-78 «Черновик» → «На согласовании»', async (
     await expect(editor).toBeVisible({ timeout: 30_000 });
   });
 
-  // Шаг 1. Открыть TEST_SM78_Текст
-  await treeItem(page, 'TEST_SM78_Текст').click();
+  await test.step('Шаг 1. Открыть TEST_SM78_Текст', async () => {
+    await treeItem(page, 'TEST_SM78_Текст').click();
+  });
 
-  // Шаг 2. Нажать состояние «Черновик» на панели редактора, выбрать «На согласовании»
-  await page.getByRole('main').getByRole('button', { name: 'Черновик', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'На согласовании' }).click();
+  await test.step('Шаг 2. Нажать состояние «Черновик» на панели редактора, выбрать «На согласовании»', async () => {
+    await page.getByRole('main').getByRole('button', { name: 'Черновик', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'На согласовании' }).click();
 
-  // Ожидание 1: состояние «На согласовании»
-  await expect(page.getByRole('main').getByRole('button', { name: 'На согласовании', exact: true })).toBeVisible();
+    // Ожидание 1: состояние «На согласовании»
+    await expect(page.getByRole('main').getByRole('button', { name: 'На согласовании', exact: true })).toBeVisible();
+  });
 
-  // Шаг 3. Перезагрузить страницу
-  await page.reload();
+  await test.step('Шаг 3. Перезагрузить страницу', async () => {
+    await page.reload();
 
-  // Ожидание 2: состояние «На согласовании»
-  await expect(page.getByRole('main').getByRole('button', { name: 'На согласовании', exact: true })).toBeVisible({ timeout: 60_000 });
+    // Ожидание 2: состояние «На согласовании»
+    await expect(page.getByRole('main').getByRole('button', { name: 'На согласовании', exact: true })).toBeVisible({ timeout: 60_000 });
+  });
 });

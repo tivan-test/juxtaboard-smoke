@@ -6,20 +6,22 @@ test('SM-130 «Показать встроенные файлы»', async ({ pag
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
   const panel = page.getByRole('main');
 
-  // Шаг 1. «Все файлы» → «Показать встроенные файлы»
-  await page.goto(url);
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
-  await panel.getByRole('button', { name: 'Все файлы' }).click();
-  await panel.getByRole('button', { name: 'Показать встроенные файлы', exact: true }).click();
+  await test.step('Шаг 1. «Все файлы» → «Показать встроенные файлы»', async () => {
+    await page.goto(url);
+    await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+    await panel.getByRole('button', { name: 'Все файлы' }).click();
+    await panel.getByRole('button', { name: 'Показать встроенные файлы', exact: true }).click();
 
-  // Ожидание 1: видны столбцы «Размер» и «Загружен»
-  await expect(panel.getByRole('columnheader', { name: 'Размер', exact: true })).toBeVisible();
-  await expect(panel.getByRole('columnheader', { name: 'Загружен', exact: true })).toBeVisible();
+    // Ожидание 1: видны столбцы «Размер» и «Загружен»
+    await expect(panel.getByRole('columnheader', { name: 'Размер', exact: true })).toBeVisible();
+    await expect(panel.getByRole('columnheader', { name: 'Загружен', exact: true })).toBeVisible();
+  });
 
-  // Шаг 2. Нажать «Показать встроенные файлы» ещё раз
-  await panel.getByRole('button', { name: 'Показать встроенные файлы', exact: true }).click();
+  await test.step('Шаг 2. Нажать «Показать встроенные файлы» ещё раз', async () => {
+    await panel.getByRole('button', { name: 'Показать встроенные файлы', exact: true }).click();
 
-  // Ожидание 2: этих столбцов нет
-  await expect(panel.getByRole('columnheader', { name: 'Размер', exact: true })).toBeHidden();
-  await expect(panel.getByRole('columnheader', { name: 'Загружен', exact: true })).toBeHidden();
+    // Ожидание 2: этих столбцов нет
+    await expect(panel.getByRole('columnheader', { name: 'Размер', exact: true })).toBeHidden();
+    await expect(panel.getByRole('columnheader', { name: 'Загружен', exact: true })).toBeHidden();
+  });
 });

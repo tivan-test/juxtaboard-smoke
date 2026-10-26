@@ -23,25 +23,31 @@ test('SM-83 Переместить папку', async ({ page }) => {
     await expect(moved).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM83_Что → «Переместить…»
-  await openTreeItemActions(moved);
-  await page.getByRole('menuitem', { name: 'Переместить…' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Переместить «TEST_SM83_Что»' });
-  const moveHere = dialog.getByRole('button', { name: 'Переместить сюда' });
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let dialog, moveHere;
 
-  // Ожидание 1: саму TEST_SM83_Что в окне выбрать нельзя — после клика по ней «Переместить сюда» остаётся недоступной
-  // (у пункта в списке нет роли, поэтому кликаем по тексту; сам пункт приглушён и клик игнорируется)
-  await dialog.getByText('TEST_SM83_Что', { exact: true }).click({ force: true });
-  await expect(moveHere).toBeDisabled();
+  await test.step('Шаг 1. ⋮ у TEST_SM83_Что → «Переместить…»', async () => {
+    await openTreeItemActions(moved);
+    await page.getByRole('menuitem', { name: 'Переместить…' }).click();
+    dialog = page.getByRole('dialog', { name: 'Переместить «TEST_SM83_Что»' });
+    moveHere = dialog.getByRole('button', { name: 'Переместить сюда' });
 
-  // Шаг 2. Выбрать TEST_SM83_Куда, нажать «Переместить сюда»
-  await dialog.getByText('TEST_SM83_Куда', { exact: true }).click();
-  await moveHere.click();
-  await expect(dialog).toBeHidden();
+    // Ожидание 1: саму TEST_SM83_Что в окне выбрать нельзя — после клика по ней «Переместить сюда» остаётся недоступной
+    // (у пункта в списке нет роли, поэтому кликаем по тексту; сам пункт приглушён и клик игнорируется)
+    await dialog.getByText('TEST_SM83_Что', { exact: true }).click({ force: true });
+    await expect(moveHere).toBeDisabled();
+  });
 
-  // Шаг 3. Раскрыть TEST_SM83_Куда — после переноса папка уже раскрыта, отдельного клика нет
-  // (повторное нажатие «Свернуть» свернуло бы её)
+  await test.step('Шаг 2. Выбрать TEST_SM83_Куда, нажать «Переместить сюда»', async () => {
+    await dialog.getByText('TEST_SM83_Куда', { exact: true }).click();
+    await moveHere.click();
+    await expect(dialog).toBeHidden();
+  });
 
-  // Ожидание 2: TEST_SM83_Что внутри TEST_SM83_Куда
-  await expect(childTreeItem(target, 'TEST_SM83_Что')).toBeVisible();
+  await test.step('Шаг 3. Раскрыть TEST_SM83_Куда', async () => {
+    // (повторное нажатие «Свернуть» свернуло бы её)
+
+    // Ожидание 2: TEST_SM83_Что внутри TEST_SM83_Куда
+    await expect(childTreeItem(target, 'TEST_SM83_Что')).toBeVisible();
+  });
 });

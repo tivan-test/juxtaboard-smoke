@@ -24,31 +24,37 @@ test('SM-132 «Версии»: сохранить и откатить', async ({
     await expect(editor).toContainText('строка один');
   });
 
-  // Шаг 1. Открыть TEST_SM132_Текст → «Версии» → «Сохранить версию»
-  await treeItem(page, 'TEST_SM132_Текст').click();
-  await expect(editor).toContainText('строка один');
-  await versionsButton.click();
-  const versionsDialog = page.getByRole('dialog');
-  await versionsDialog.getByRole('button', { name: 'Сохранить версию' }).click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let versionsDialog;
 
-  // Ожидание 1: в списке версия «v1»
-  await expect(versionsDialog.getByText('v1')).toBeVisible();
+  await test.step('Шаг 1. Открыть TEST_SM132_Текст → «Версии» → «Сохранить версию»', async () => {
+    await treeItem(page, 'TEST_SM132_Текст').click();
+    await expect(editor).toContainText('строка один');
+    await versionsButton.click();
+    versionsDialog = page.getByRole('dialog');
+    await versionsDialog.getByRole('button', { name: 'Сохранить версию' }).click();
 
-  // Шаг 2. Дописать новую строку «строка два» (сначала закрываем окно версий)
-  await page.keyboard.press('Escape');
-  await expect(versionsDialog).toBeHidden();
-  await editor.click();
-  await page.keyboard.press('ControlOrMeta+End');
-  await page.keyboard.press('Enter');
-  await page.keyboard.type('строка два');
-  await expect(editor).toContainText('строка два');
+    // Ожидание 1: в списке версия «v1»
+    await expect(versionsDialog.getByText('v1')).toBeVisible();
+  });
 
-  // Шаг 3. «Версии» → у v1 «Откатить» (кнопка называется «Откатиться к версии 1») → «Да»
-  await versionsButton.click();
-  await page.getByRole('button', { name: 'Откатиться к версии 1' }).click();
-  await page.getByRole('button', { name: 'Да', exact: true }).click();
+  await test.step('Шаг 2. Дописать новую строку «строка два»', async () => {
+    await page.keyboard.press('Escape');
+    await expect(versionsDialog).toBeHidden();
+    await editor.click();
+    await page.keyboard.press('ControlOrMeta+End');
+    await page.keyboard.press('Enter');
+    await page.keyboard.type('строка два');
+    await expect(editor).toContainText('строка два');
+  });
 
-  // Ожидание 2: в документе «строка один», «строки два» нет
-  await expect(editor).toContainText('строка один');
-  await expect(editor).not.toContainText('строка два');
+  await test.step('Шаг 3. «Версии» → у v1 «Откатить» → «Да»', async () => {
+    await versionsButton.click();
+    await page.getByRole('button', { name: 'Откатиться к версии 1' }).click();
+    await page.getByRole('button', { name: 'Да', exact: true }).click();
+
+    // Ожидание 2: в документе «строка один», «строки два» нет
+    await expect(editor).toContainText('строка один');
+    await expect(editor).not.toContainText('строка два');
+  });
 });

@@ -5,18 +5,23 @@ test('SM-47 «Администрирование»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { name, url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
-  // Шаг 1. Открыть навигатор пространства прогона
-  await page.goto(url);
-  const admin = page.getByRole('banner').getByRole('button', { name: 'Администрирование' });
-  await expect(admin).toBeVisible({ timeout: 60_000 });
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let admin, menu;
 
-  // Шаг 2. Нажать «Администрирование»
-  await admin.click();
+  await test.step('Шаг 1. Открыть навигатор пространства прогона', async () => {
+    await page.goto(url);
+    admin = page.getByRole('banner').getByRole('button', { name: 'Администрирование' });
+    await expect(admin).toBeVisible({ timeout: 60_000 });
+  });
 
-  // Ожидание: видны «Редактировать», «Журнал изменений», «Журнал изменений данных», «Удалить пространство» (ничего не нажимаем)
-  const menu = page.getByRole('menu', { name: 'Администрирование' });
-  await expect(menu.getByRole('menuitem', { name: 'Редактировать', exact: true })).toBeVisible();
-  await expect(menu.getByRole('menuitem', { name: 'Журнал изменений', exact: true })).toBeVisible();
-  await expect(menu.getByRole('menuitem', { name: 'Журнал изменений данных', exact: true })).toBeVisible();
-  await expect(menu.getByRole('menuitem', { name: 'Удалить пространство', exact: true })).toBeVisible();
+  await test.step('Шаг 2. Нажать «Администрирование»', async () => {
+    await admin.click();
+
+    // Ожидание: видны «Редактировать», «Журнал изменений», «Журнал изменений данных», «Удалить пространство» (ничего не нажимаем)
+    menu = page.getByRole('menu', { name: 'Администрирование' });
+    await expect(menu.getByRole('menuitem', { name: 'Редактировать', exact: true })).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Журнал изменений', exact: true })).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Журнал изменений данных', exact: true })).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Удалить пространство', exact: true })).toBeVisible();
+  });
 });

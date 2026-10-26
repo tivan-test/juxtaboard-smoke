@@ -26,15 +26,17 @@ test('SM-92 Вид «Таймлайн»', async ({ page }) => {
     await expect(dateCell).toContainText(todayCell);
   });
 
-  // Шаг 1. Открыть TEST_SM92_Таблица
-  await treeItem(page, 'TEST_SM92_Таблица').click();
+  await test.step('Шаг 1. Открыть TEST_SM92_Таблица', async () => {
+    await treeItem(page, 'TEST_SM92_Таблица').click();
+  });
 
-  // Шаг 2. Вид «По умолчанию» → «Таймлайн»
-  await main.getByRole('button', { name: 'По умолчанию' }).click();
-  await page.getByRole('button', { name: 'Таймлайн', exact: true }).click();
+  await test.step('Шаг 2. Вид «По умолчанию» → «Таймлайн»', async () => {
+    await main.getByRole('button', { name: 'По умолчанию' }).click();
+    await page.getByRole('button', { name: 'Таймлайн', exact: true }).click();
 
-  // Ожидание: в списке слева видна «Строка таймлайн»
-  // Строка есть и в списке слева, и в виде полоски на шкале; список слева идёт первым в документе
-  // eslint-disable-next-line playwright/no-nth-methods -- у списка слева в таймлайне нет роли и названия (пробел в приложении)
-  await expect(main.getByRole('button', { name: /^Строка таймлайн/ }).first()).toBeVisible();
+    // Ожидание: в списке слева видна «Строка таймлайн»
+    // Строка есть и в списке слева, и в виде полоски на шкале; список слева идёт первым в документе
+    // eslint-disable-next-line playwright/no-nth-methods -- у списка слева в таймлайне нет роли и названия (пробел в приложении)
+    await expect(main.getByRole('button', { name: /^Строка таймлайн/ }).first()).toBeVisible();
+  });
 });

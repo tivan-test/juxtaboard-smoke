@@ -10,28 +10,32 @@ test('SM-129 «Настроить столбцы»', async ({ page }) => {
   // поэтому заголовок столбца ищем с includeHidden; видимость на экране toBeVisible проверяет сам
   const createdColumn = page.getByRole('columnheader', { name: 'Создан', exact: true, includeHidden: true });
 
-  // Шаг 1. «Все файлы» → «Список» → «Настроить столбцы»
-  await openSpace(page, url);
-  await panel.getByRole('button', { name: 'Все файлы' }).click();
-  await panel.getByRole('button', { name: 'Список', exact: true }).click();
-  await expect(createdColumn).toBeVisible();
-  await page.getByRole('button', { name: 'Настроить столбцы' }).click();
+  await test.step('Шаг 1. «Все файлы» → «Список» → «Настроить столбцы»', async () => {
+    await openSpace(page, url);
+    await panel.getByRole('button', { name: 'Все файлы' }).click();
+    await panel.getByRole('button', { name: 'Список', exact: true }).click();
+    await expect(createdColumn).toBeVisible();
+    await page.getByRole('button', { name: 'Настроить столбцы' }).click();
+  });
 
-  // Шаг 2. Снять галочку «Создан»
-  await page.getByRole('menuitemcheckbox', { name: 'Создан', exact: true }).click();
+  await test.step('Шаг 2. Снять галочку «Создан»', async () => {
+    await page.getByRole('menuitemcheckbox', { name: 'Создан', exact: true }).click();
 
-  // Ожидание 1: столбца «Создан» нет
-  await expect(createdColumn).toHaveCount(0);
+    // Ожидание 1: столбца «Создан» нет
+    await expect(createdColumn).toHaveCount(0);
+  });
 
-  // Шаг 3. Поставить галочку «Создан»
-  await page.getByRole('menuitemcheckbox', { name: 'Создан', exact: true }).click();
+  await test.step('Шаг 3. Поставить галочку «Создан»', async () => {
+    await page.getByRole('menuitemcheckbox', { name: 'Создан', exact: true }).click();
 
-  // Ожидание 2: столбец «Создан» есть
-  await expect(createdColumn).toBeVisible();
+    // Ожидание 2: столбец «Создан» есть
+    await expect(createdColumn).toBeVisible();
+  });
 
-  // Шаг 4. Закрыть меню, нажать «Плитки» (вернуть карточки)
-  await page.keyboard.press('Escape');
-  await expect(page.getByRole('menu')).toBeHidden();
-  await panel.getByRole('button', { name: 'Плитки', exact: true }).click();
-  await expect(panel.getByRole('table')).toBeHidden();
+  await test.step('Шаг 4. Закрыть меню, нажать «Плитки» (вернуть карточки)', async () => {
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('menu')).toBeHidden();
+    await panel.getByRole('button', { name: 'Плитки', exact: true }).click();
+    await expect(panel.getByRole('table')).toBeHidden();
+  });
 });

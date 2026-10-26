@@ -20,26 +20,32 @@ test('SM-119 ⋮ → «Управление доступом…»', async ({ pag
     await expect(doc).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM119_Текст → «Управление доступом…»
-  await openTreeItemActions(doc);
-  await page.getByRole('menuitem', { name: 'Управление доступом…' }).click();
-  const accessDialog = page.getByRole('dialog', { name: 'Доступ — TEST_SM119_Текст' });
-  // У переключателя «Ограничить доступ» нет названия (подпись рядом с ним не связана с ним), в окне он единственный
-  // TODO для разработчиков: связать переключатель с подписью «Ограничить доступ» (aria-label или aria-labelledby)
-  const restrict = accessDialog.getByRole('switch');
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let accessDialog, restrict;
 
-  // Шаг 2. Включить «Ограничить доступ»
-  await restrict.click();
+  await test.step('Шаг 1. ⋮ у TEST_SM119_Текст → «Управление доступом…»', async () => {
+    await openTreeItemActions(doc);
+    await page.getByRole('menuitem', { name: 'Управление доступом…' }).click();
+    accessDialog = page.getByRole('dialog', { name: 'Доступ — TEST_SM119_Текст' });
+    // У переключателя «Ограничить доступ» нет названия (подпись рядом с ним не связана с ним), в окне он единственный
+    // TODO для разработчиков: связать переключатель с подписью «Ограничить доступ» (aria-label или aria-labelledby)
+    restrict = accessDialog.getByRole('switch');
+  });
 
-  // Ожидание 1: видны вкладки «Пользователи», «Права групп» и почта аккаунта с «Владелец проекта»
-  await expect(accessDialog.getByRole('button', { name: 'Пользователи' })).toBeVisible();
-  await expect(accessDialog.getByRole('button', { name: 'Права групп' })).toBeVisible();
-  await expect(accessDialog.getByRole('row').filter({ hasText: process.env.JB_EMAIL! }).filter({ hasText: 'Владелец проекта' })).toBeVisible();
+  await test.step('Шаг 2. Включить «Ограничить доступ»', async () => {
+    await restrict.click();
 
-  // Шаг 3. Выключить «Ограничить доступ»
-  await restrict.click();
+    // Ожидание 1: видны вкладки «Пользователи», «Права групп» и почта аккаунта с «Владелец проекта»
+    await expect(accessDialog.getByRole('button', { name: 'Пользователи' })).toBeVisible();
+    await expect(accessDialog.getByRole('button', { name: 'Права групп' })).toBeVisible();
+    await expect(accessDialog.getByRole('row').filter({ hasText: process.env.JB_EMAIL! }).filter({ hasText: 'Владелец проекта' })).toBeVisible();
+  });
 
-  // Ожидание 2: видно «Этот элемент наследует доступ от проекта»
-  await expect(restrict).not.toBeChecked();
-  await expect(accessDialog.getByText('Этот элемент наследует доступ от проекта')).toBeVisible();
+  await test.step('Шаг 3. Выключить «Ограничить доступ»', async () => {
+    await restrict.click();
+
+    // Ожидание 2: видно «Этот элемент наследует доступ от проекта»
+    await expect(restrict).not.toBeChecked();
+    await expect(accessDialog.getByText('Этот элемент наследует доступ от проекта')).toBeVisible();
+  });
 });

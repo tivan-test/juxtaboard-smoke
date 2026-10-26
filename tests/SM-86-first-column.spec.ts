@@ -11,18 +11,24 @@ test('SM-86 Первый столбец', async ({ page }) => {
     await setUpDataTable(page, url, { name: 'TEST_SM86_Таблица' });
   });
 
-  // Шаг 1. Открыть TEST_SM86_Таблица
-  await treeItem(page, 'TEST_SM86_Таблица').click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let fieldDialog;
 
-  // Шаг 2. Нажать «Добавить первый столбец»
-  await page.getByRole('main').getByRole('button', { name: 'Добавить первый столбец' }).click();
+  await test.step('Шаг 1. Открыть TEST_SM86_Таблица', async () => {
+    await treeItem(page, 'TEST_SM86_Таблица').click();
+  });
 
-  // Шаг 3. Ввести название поля «Название», тип «Текст», нажать «Создать поле»
-  const fieldDialog = page.getByRole('dialog', { name: 'Добавить колонку' });
-  await fieldDialog.getByRole('textbox', { name: 'напр. Статус, Ответственный, Срок' }).fill('Название');
-  await fieldDialog.getByRole('button', { name: /^Текст Одна строка/ }).click();
-  await fieldDialog.getByRole('button', { name: 'Создать поле' }).click();
+  await test.step('Шаг 2. Нажать «Добавить первый столбец»', async () => {
+    await page.getByRole('main').getByRole('button', { name: 'Добавить первый столбец' }).click();
+  });
 
-  // Ожидание: в таблице есть столбец «Название»
-  await expect(columnHeader(dataGrid(page), 'Название')).toBeVisible();
+  await test.step('Шаг 3. Ввести название поля «Название», тип «Текст», нажать «Создать поле»', async () => {
+    fieldDialog = page.getByRole('dialog', { name: 'Добавить колонку' });
+    await fieldDialog.getByRole('textbox', { name: 'напр. Статус, Ответственный, Срок' }).fill('Название');
+    await fieldDialog.getByRole('button', { name: /^Текст Одна строка/ }).click();
+    await fieldDialog.getByRole('button', { name: 'Создать поле' }).click();
+
+    // Ожидание: в таблице есть столбец «Название»
+    await expect(columnHeader(dataGrid(page), 'Название')).toBeVisible();
+  });
 });

@@ -29,19 +29,24 @@ test('SM-113 Дублировать документ', async ({ page }) => {
     await expect(original).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM113_Текст → «Дублировать»
-  await openTreeItemActions(original);
-  await page.getByRole('menuitem', { name: 'Дублировать' }).click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let urlBefore;
 
-  // Ожидание 1: в дереве «TEST_SM113_Текст (2)»
-  await expect(copy).toBeVisible();
+  await test.step('Шаг 1. ⋮ у TEST_SM113_Текст → «Дублировать»', async () => {
+    await openTreeItemActions(original);
+    await page.getByRole('menuitem', { name: 'Дублировать' }).click();
 
-  // Шаг 2. Открыть «TEST_SM113_Текст (2)»
-  const urlBefore = page.url();
-  await treeRow(copy).click();
-  // Пока адрес не сменился, в редакторе ещё исходный документ с тем же текстом
-  await expect(page).not.toHaveURL(urlBefore);
+    // Ожидание 1: в дереве «TEST_SM113_Текст (2)»
+    await expect(copy).toBeVisible();
+  });
 
-  // Ожидание 2: в копии тот же текст
-  await expect(editor).toContainText('Проверка смоук текста 123');
+  await test.step('Шаг 2. Открыть «TEST_SM113_Текст (2)»', async () => {
+    urlBefore = page.url();
+    await treeRow(copy).click();
+    // Пока адрес не сменился, в редакторе ещё исходный документ с тем же текстом
+    await expect(page).not.toHaveURL(urlBefore);
+
+    // Ожидание 2: в копии тот же текст
+    await expect(editor).toContainText('Проверка смоук текста 123');
+  });
 });

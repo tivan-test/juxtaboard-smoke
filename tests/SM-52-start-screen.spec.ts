@@ -5,15 +5,20 @@ test('SM-52 «Стартовый экран»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { name, url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
-  // Шаг 1. Открыть навигатор пространства прогона → «Администрирование»
-  await page.goto(url);
-  const admin = page.getByRole('banner').getByRole('button', { name: 'Администрирование' });
-  await expect(admin).toBeVisible({ timeout: 60_000 });
-  await admin.click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let admin;
 
-  // Шаг 2. Нажать «Стартовый экран»
-  await page.getByRole('menuitem', { name: 'Стартовый экран', exact: true }).click();
+  await test.step('Шаг 1. Открыть навигатор пространства прогона → «Администрирование»', async () => {
+    await page.goto(url);
+    admin = page.getByRole('banner').getByRole('button', { name: 'Администрирование' });
+    await expect(admin).toBeVisible({ timeout: 60_000 });
+    await admin.click();
+  });
 
-  // Ожидание: видно «Плиток пока нет»
-  await expect(page.getByRole('dialog', { name: 'Стартовый экран' }).getByText('Плиток пока нет')).toBeVisible();
+  await test.step('Шаг 2. Нажать «Стартовый экран»', async () => {
+    await page.getByRole('menuitem', { name: 'Стартовый экран', exact: true }).click();
+
+    // Ожидание: видно «Плиток пока нет»
+    await expect(page.getByRole('dialog', { name: 'Стартовый экран' }).getByText('Плиток пока нет')).toBeVisible();
+  });
 });

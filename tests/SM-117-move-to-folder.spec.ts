@@ -29,20 +29,26 @@ test('SM-117 ⋮ → «Переместить…»', async ({ page }) => {
     await expect(folder).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM117_Текст → «Переместить…»
-  await openTreeItemActions(doc);
-  await page.getByRole('menuitem', { name: 'Переместить…' }).click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let moveDialog;
 
-  // Шаг 2. Выбрать TEST_SM117_Папка, нажать «Переместить сюда»
-  const moveDialog = page.getByRole('dialog', { name: 'Переместить «TEST_SM117_Текст»' });
-  // Места назначения в окне — просто текст без ролей
-  await moveDialog.getByText('TEST_SM117_Папка', { exact: true }).click();
-  await moveDialog.getByRole('button', { name: 'Переместить сюда' }).click();
-  await expect(moveDialog).toBeHidden();
+  await test.step('Шаг 1. ⋮ у TEST_SM117_Текст → «Переместить…»', async () => {
+    await openTreeItemActions(doc);
+    await page.getByRole('menuitem', { name: 'Переместить…' }).click();
+  });
 
-  // Шаг 3. Раскрыть TEST_SM117_Папка
-  // Папка раскрывается сама после переноса документа в неё, поэтому отдельного нажатия нет
+  await test.step('Шаг 2. Выбрать TEST_SM117_Папка, нажать «Переместить сюда»', async () => {
+    moveDialog = page.getByRole('dialog', { name: 'Переместить «TEST_SM117_Текст»' });
+    // Места назначения в окне — просто текст без ролей
+    await moveDialog.getByText('TEST_SM117_Папка', { exact: true }).click();
+    await moveDialog.getByRole('button', { name: 'Переместить сюда' }).click();
+    await expect(moveDialog).toBeHidden();
+  });
 
-  // Ожидание: TEST_SM117_Текст внутри TEST_SM117_Папка
-  await expect(childTreeItem(folder, 'TEST_SM117_Текст')).toBeVisible();
+  await test.step('Шаг 3. Раскрыть TEST_SM117_Папка', async () => {
+    // Папка раскрывается сама после переноса документа в неё, поэтому отдельного нажатия нет
+
+    // Ожидание: TEST_SM117_Текст внутри TEST_SM117_Папка
+    await expect(childTreeItem(folder, 'TEST_SM117_Текст')).toBeVisible();
+  });
 });

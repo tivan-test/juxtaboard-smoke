@@ -20,17 +20,19 @@ test('SM-135 «Экспорт / Импорт», без скачивания', as
     await expect(editor).toBeVisible({ timeout: 30_000 });
   });
 
-  // Шаг 1. Открыть TEST_SM135_Текст → «Экспорт / Импорт» (только открыть меню, ничего не скачиваем)
-  await treeItem(page, 'TEST_SM135_Текст').click();
-  await expect(editor).toBeVisible();
-  await exportButton.click();
+  await test.step('Шаг 1. Открыть TEST_SM135_Текст → «Экспорт / Импорт»', async () => {
+    await treeItem(page, 'TEST_SM135_Текст').click();
+    await expect(editor).toBeVisible();
+    await exportButton.click();
 
-  // Ожидание: видны «Скачать как HTML», «Скачать как Markdown», «Скачать как DOCX», «Скачать как PDF», «Импорт содержимого»
-  for (const item of ['Скачать как HTML', 'Скачать как Markdown', 'Скачать как DOCX', 'Скачать как PDF', 'Импорт содержимого']) {
-    await expect(page.getByRole('menuitem', { name: item, exact: true })).toBeVisible();
-  }
+    // Ожидание: видны «Скачать как HTML», «Скачать как Markdown», «Скачать как DOCX», «Скачать как PDF», «Импорт содержимого»
+    for (const item of ['Скачать как HTML', 'Скачать как Markdown', 'Скачать как DOCX', 'Скачать как PDF', 'Импорт содержимого']) {
+      await expect(page.getByRole('menuitem', { name: item, exact: true })).toBeVisible();
+    }
+  });
 
-  // Шаг 2. Нажать Esc
-  await page.keyboard.press('Escape');
-  await expect(page.getByRole('menu')).toBeHidden();
+  await test.step('Шаг 2. Нажать Esc', async () => {
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('menu')).toBeHidden();
+  });
 });

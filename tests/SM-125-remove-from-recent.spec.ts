@@ -21,20 +21,25 @@ test('SM-125 «×» на карточке', async ({ page }) => {
     await expect(page.getByRole('textbox', { name: 'Текст документа' })).toBeVisible({ timeout: 30_000 });
   });
 
-  // Шаг 1. Открыть навигатор пространства прогона → «Главная»
-  await openSpace(page, url);
-  await panel.getByRole('button', { name: 'Главная' }).click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let card;
 
-  // Карточка документа: блок, где есть и название, и кнопка «Убрать из недавних»
-  // (у карточки нет роли; последний подходящий блок — самый вложенный, то есть сама карточка)
-  // eslint-disable-next-line playwright/no-raw-locators, playwright/no-nth-methods -- пробел приложения: карточка недавнего документа — div без роли и названия
-  const card = recent.locator('div').filter({ has: page.getByText('TEST_SM125_Текст', { exact: true }) }).filter({ has: page.getByRole('button', { name: 'Убрать из недавних' }) }).last();
-  await expect(card).toBeVisible({ timeout: 30_000 });
+  await test.step('Шаг 1. Открыть навигатор пространства прогона → «Главная»', async () => {
+    await openSpace(page, url);
+    await panel.getByRole('button', { name: 'Главная' }).click();
 
-  // Шаг 2. На карточке TEST_SM125_Текст нажать «×» (кнопка называется «Убрать из недавних»)
-  await card.hover();
-  await card.getByRole('button', { name: 'Убрать из недавних' }).click();
+    // Карточка документа: блок, где есть и название, и кнопка «Убрать из недавних»
+    // (у карточки нет роли; последний подходящий блок — самый вложенный, то есть сама карточка)
+    // eslint-disable-next-line playwright/no-raw-locators, playwright/no-nth-methods -- пробел приложения: карточка недавнего документа — div без роли и названия
+    card = recent.locator('div').filter({ has: page.getByText('TEST_SM125_Текст', { exact: true }) }).filter({ has: page.getByRole('button', { name: 'Убрать из недавних' }) }).last();
+    await expect(card).toBeVisible({ timeout: 30_000 });
+  });
 
-  // Ожидание: TEST_SM125_Текст в «Недавно открытые» нет
-  await expect(recent.getByText('TEST_SM125_Текст', { exact: true })).toBeHidden();
+  await test.step('Шаг 2. На карточке TEST_SM125_Текст нажать «×»', async () => {
+    await card.hover();
+    await card.getByRole('button', { name: 'Убрать из недавних' }).click();
+
+    // Ожидание: TEST_SM125_Текст в «Недавно открытые» нет
+    await expect(recent.getByText('TEST_SM125_Текст', { exact: true })).toBeHidden();
+  });
 });

@@ -5,21 +5,27 @@ test('SM-59 «Экспорт / Импорт», без экспорта', async (
   // Пространство прогона (SM-02) создано перед прогоном
   const { name, url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
-  // Шаг 1. Открыть навигатор пространства прогона → «Администрирование»
-  await page.goto(url);
-  const admin = page.getByRole('banner').getByRole('button', { name: 'Администрирование' });
-  await expect(admin).toBeVisible({ timeout: 60_000 });
-  await admin.click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let admin, dialog;
 
-  // Шаг 2. Нажать «Экспорт / Импорт»
-  await page.getByRole('menuitem', { name: 'Экспорт / Импорт', exact: true }).click();
-  const dialog = page.getByRole('dialog', { name: 'Экспорт / импорт пространства' });
+  await test.step('Шаг 1. Открыть навигатор пространства прогона → «Администрирование»', async () => {
+    await page.goto(url);
+    admin = page.getByRole('banner').getByRole('button', { name: 'Администрирование' });
+    await expect(admin).toBeVisible({ timeout: 60_000 });
+    await admin.click();
+  });
 
-  // Ожидание: видны вкладки «Экспорт» и «Импорт» (экспорт не запускаем)
-  await expect(dialog.getByRole('button', { name: 'Экспорт', exact: true })).toBeVisible();
-  await expect(dialog.getByRole('button', { name: 'Импорт', exact: true })).toBeVisible();
+  await test.step('Шаг 2. Нажать «Экспорт / Импорт»', async () => {
+    await page.getByRole('menuitem', { name: 'Экспорт / Импорт', exact: true }).click();
+    dialog = page.getByRole('dialog', { name: 'Экспорт / импорт пространства' });
 
-  // Шаг 3. Закрыть окно
-  await dialog.getByRole('button', { name: 'Close' }).click();
-  await expect(dialog).toBeHidden();
+    // Ожидание: видны вкладки «Экспорт» и «Импорт» (экспорт не запускаем)
+    await expect(dialog.getByRole('button', { name: 'Экспорт', exact: true })).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Импорт', exact: true })).toBeVisible();
+  });
+
+  await test.step('Шаг 3. Закрыть окно', async () => {
+    await dialog.getByRole('button', { name: 'Close' }).click();
+    await expect(dialog).toBeHidden();
+  });
 });

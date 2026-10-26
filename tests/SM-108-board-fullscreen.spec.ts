@@ -20,16 +20,20 @@ test('SM-108 ⋮ доски → «Открыть на весь экран»', as
     await expect(boardItem).toBeVisible();
   });
 
-  // Шаг 1. ⋮ («Действия») у TEST_SM108_Доска → «Открыть на весь экран»
-  await openTreeItemActions(boardItem);
-  const [newPage] = await Promise.all([
-    page.context().waitForEvent('page'),
-    page.getByRole('menuitem', { name: 'Открыть на весь экран' }).click(),
-  ]);
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let newPage;
 
-  // Ожидание: открылась новая вкладка с адресом, который заканчивается на /fullscreen
-  await expect(newPage).toHaveURL(/\/fullscreen$/);
+  await test.step('Шаг 1. ⋮ у TEST_SM108_Доска → «Открыть на весь экран»', async () => {
+    await openTreeItemActions(boardItem);
+    [newPage] = await Promise.all([
+      page.context().waitForEvent('page'),
+      page.getByRole('menuitem', { name: 'Открыть на весь экран' }).click(),
+    ]);
 
-  // Закрыть открытую вкладку
-  await newPage.close();
+    // Ожидание: открылась новая вкладка с адресом, который заканчивается на /fullscreen
+    await expect(newPage).toHaveURL(/\/fullscreen$/);
+
+    // Закрыть открытую вкладку
+    await newPage.close();
+  });
 });

@@ -12,13 +12,14 @@ test('SM-96 ⋮ таблицы → «Автоматизации…»', async ({ 
     await setUpDataTable(page, url, { name: 'TEST_SM96_Таблица' });
   });
 
-  // Шаг 1. ⋮ у TEST_SM96_Таблица в дереве → «Автоматизации…»
-  await openTreeItemActions(treeItem(page, 'TEST_SM96_Таблица'));
-  await page.getByRole('menuitem', { name: 'Автоматизации…', exact: true }).click();
+  await test.step('Шаг 1. ⋮ у TEST_SM96_Таблица в дереве → «Автоматизации…»', async () => {
+    await openTreeItemActions(treeItem(page, 'TEST_SM96_Таблица'));
+    await page.getByRole('menuitem', { name: 'Автоматизации…', exact: true }).click();
 
-  // Ожидание 1: открылся раздел «Автоматизации»
-  await expect(main.getByText('Автоматизации', { exact: true })).toBeVisible();
+    // Ожидание 1: открылся раздел «Автоматизации»
+    await expect(main.getByText('Автоматизации', { exact: true })).toBeVisible();
 
-  // Ожидание 2: видно «Фильтр по таблице: TEST_SM96_Таблица»
-  await expect(main.getByText('Фильтр по таблице: TEST_SM96_Таблица')).toBeVisible();
+    // Ожидание 2: видно «Фильтр по таблице: TEST_SM96_Таблица»
+    await expect(main.getByText('Фильтр по таблице: TEST_SM96_Таблица')).toBeVisible();
+  });
 });

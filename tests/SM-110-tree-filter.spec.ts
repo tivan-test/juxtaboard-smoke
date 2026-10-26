@@ -18,13 +18,15 @@ test('SM-110 Фильтр дерева', async ({ page }) => {
     await expect(page.getByRole('textbox', { name: 'Текст документа' })).toBeVisible({ timeout: 30_000 });
   });
 
-  // Шаг 1. Открыть навигатор пространства прогона
-  await openSpace(page, url);
+  await test.step('Шаг 1. Открыть навигатор пространства прогона', async () => {
+    await openSpace(page, url);
+  });
 
-  // Шаг 2. Ввести в «Фильтр по имени или #тегу…» «SM110»
-  await treeFilter(page).fill('SM110');
+  await test.step('Шаг 2. Ввести в «Фильтр по имени или #тегу…» «SM110»', async () => {
+    await treeFilter(page).fill('SM110');
 
-  // Ожидание: в дереве только «TEST_SM110_Текст» (один элемент, папок нет)
-  await expect(docTree(page).getByRole('treeitem')).toHaveCount(1);
-  await expect(treeItem(page, 'TEST_SM110_Текст')).toBeVisible();
+    // Ожидание: в дереве только «TEST_SM110_Текст» (один элемент, папок нет)
+    await expect(docTree(page).getByRole('treeitem')).toHaveCount(1);
+    await expect(treeItem(page, 'TEST_SM110_Текст')).toBeVisible();
+  });
 });

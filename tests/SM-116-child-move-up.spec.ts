@@ -34,14 +34,15 @@ test('SM-116 «Переместить на уровень выше»', async ({ 
     await expect(child).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM116_Дочерний → «Переместить на уровень выше»
-  await openTreeItemActions(child);
-  await page.getByRole('menuitem', { name: 'Переместить на уровень выше' }).click();
+  await test.step('Шаг 1. ⋮ у TEST_SM116_Дочерний → «Переместить на уровень выше»', async () => {
+    await openTreeItemActions(child);
+    await page.getByRole('menuitem', { name: 'Переместить на уровень выше' }).click();
 
-  // Ожидание 1: TEST_SM116_Дочерний на верхнем уровне дерева, внутри родителя никого не осталось
-  await expect(docTree(page).getByRole('treeitem', { name: 'TEST_SM116_Дочерний', exact: true, level: 1 })).toBeVisible();
-  await expect(parent.getByRole('group').getByRole('treeitem')).toHaveCount(0);
+    // Ожидание 1: TEST_SM116_Дочерний на верхнем уровне дерева, внутри родителя никого не осталось
+    await expect(docTree(page).getByRole('treeitem', { name: 'TEST_SM116_Дочерний', exact: true, level: 1 })).toBeVisible();
+    await expect(parent.getByRole('group').getByRole('treeitem')).toHaveCount(0);
 
-  // Ожидание 2: у TEST_SM116_Родитель нет стрелки раскрытия
-  await expect(treeRow(parent).getByRole('button', { name: /^(Развернуть|Свернуть)$/ })).toHaveCount(0);
+    // Ожидание 2: у TEST_SM116_Родитель нет стрелки раскрытия
+    await expect(treeRow(parent).getByRole('button', { name: /^(Развернуть|Свернуть)$/ })).toHaveCount(0);
+  });
 });

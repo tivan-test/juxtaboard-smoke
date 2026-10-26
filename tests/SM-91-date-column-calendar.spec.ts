@@ -19,34 +19,41 @@ test('SM-91 Столбец «Дата» и вид «Календарь»', async
     await setUpDataTable(page, url, { name: 'TEST_SM91_Таблица', rows: ['Строка календарь'] });
   });
 
-  // Шаг 1. Открыть TEST_SM91_Таблица
-  await treeItem(page, 'TEST_SM91_Таблица').click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let dateCell, dayCell, card;
 
-  // Шаг 2. Нажать «+» в шапке, название «Дата», тип «Дата», нажать «Создать поле»
-  await addColumn(page, 'Дата', /^Дата Календарная/);
+  await test.step('Шаг 1. Открыть TEST_SM91_Таблица', async () => {
+    await treeItem(page, 'TEST_SM91_Таблица').click();
+  });
 
-  // Шаг 3. В ячейку «Дата» ввести сегодняшнюю дату
-  // Двойной клик по ячейке открывает поле даты
-  const dateCell = await gridCell(grid, gridRow(grid, 'Строка календарь'), 'Дата');
-  await dateCell.dblclick();
-  // eslint-disable-next-line playwright/no-raw-locators -- у поля даты в ячейке нет названия (пробел в приложении), находим по типу input внутри ячейки
-  await dateCell.locator('input[type="date"]').fill(todayIso);
-  await page.keyboard.press('Enter');
-  await expect(dateCell).toContainText(todayCell);
+  await test.step('Шаг 2. Нажать «+» в шапке, название «Дата», тип «Дата», нажать «Создать поле»', async () => {
+    await addColumn(page, 'Дата', /^Дата Календарная/);
+  });
 
-  // Шаг 4. Вид «По умолчанию» → «Календарь»
-  await main.getByRole('button', { name: 'По умолчанию' }).click();
-  await page.getByRole('button', { name: 'Календарь', exact: true }).click();
+  await test.step('Шаг 3. В ячейку «Дата» ввести сегодняшнюю дату', async () => {
+    // Двойной клик по ячейке открывает поле даты
+    dateCell = await gridCell(grid, gridRow(grid, 'Строка календарь'), 'Дата');
+    await dateCell.dblclick();
+    // eslint-disable-next-line playwright/no-raw-locators -- у поля даты в ячейке нет названия (пробел в приложении), находим по типу input внутри ячейки
+    await dateCell.locator('input[type="date"]').fill(todayIso);
+    await page.keyboard.press('Enter');
+    await expect(dateCell).toContainText(todayCell);
+  });
 
-  // Ожидание: «Строка календарь» видна в клетке сегодняшнего дня
-  const dayCell = main.getByRole('group', { name: todayLabel, exact: true });
-  const card = main.getByRole('button', { name: 'Строка календарь' });
-  // Карточка нарисована поверх недели, не внутри клетки, поэтому сравниваем положение на экране
-  await expect.poll(async () => {
-    const c = await card.boundingBox();
-    const d = await dayCell.boundingBox();
-    return c !== null && d !== null
-      && c.x >= d.x - 1 && c.x + c.width <= d.x + d.width + 1
-      && c.y >= d.y && c.y + c.height <= d.y + d.height + 1;
-  }).toBe(true);
+  await test.step('Шаг 4. Вид «По умолчанию» → «Календарь»', async () => {
+    await main.getByRole('button', { name: 'По умолчанию' }).click();
+    await page.getByRole('button', { name: 'Календарь', exact: true }).click();
+
+    // Ожидание: «Строка календарь» видна в клетке сегодняшнего дня
+    dayCell = main.getByRole('group', { name: todayLabel, exact: true });
+    card = main.getByRole('button', { name: 'Строка календарь' });
+    // Карточка нарисована поверх недели, не внутри клетки, поэтому сравниваем положение на экране
+    await expect.poll(async () => {
+      const c = await card.boundingBox();
+      const d = await dayCell.boundingBox();
+      return c !== null && d !== null
+        && c.x >= d.x - 1 && c.x + c.width <= d.x + d.width + 1
+        && c.y >= d.y && c.y + c.height <= d.y + d.height + 1;
+    }).toBe(true);
+  });
 });

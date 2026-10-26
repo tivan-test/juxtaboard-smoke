@@ -11,17 +11,22 @@ test('SM-99 «Схема» с таблицей', async ({ page }) => {
     await setUpDataTable(page, url, { name: 'TEST_SM99_Таблица', withTitleColumn: true });
   });
 
-  // Шаг 1. Открыть /projects, «Показать ещё»
-  await page.goto('/projects');
-  await page.getByRole('button', { name: /^Показать ещё/ }).click({ timeout: 60_000 });
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let card, tableCard;
 
-  // Шаг 2. На карточке пространства прогона нажать «Схема»
-  const card = spaceCard(activeSpaces(page), name);
-  await card.getByRole('link', { name: 'Схема' }).click();
+  await test.step('Шаг 1. Открыть /projects, «Показать ещё»', async () => {
+    await page.goto('/projects');
+    await page.getByRole('button', { name: /^Показать ещё/ }).click({ timeout: 60_000 });
+  });
 
-  // Ожидание: видна карточка «TEST_SM99_Таблица» с полем «Название»
-  // Карточка таблицы на схеме — group внутри области схемы (application)
-  const tableCard = page.getByRole('application').getByRole('group').filter({ hasText: 'TEST_SM99_Таблица' });
-  await expect(tableCard).toBeVisible({ timeout: 60_000 });
-  await expect(tableCard.getByRole('listitem').filter({ hasText: 'Название' })).toBeVisible();
+  await test.step('Шаг 2. На карточке пространства прогона нажать «Схема»', async () => {
+    card = spaceCard(activeSpaces(page), name);
+    await card.getByRole('link', { name: 'Схема' }).click();
+
+    // Ожидание: видна карточка «TEST_SM99_Таблица» с полем «Название»
+    // Карточка таблицы на схеме — group внутри области схемы (application)
+    tableCard = page.getByRole('application').getByRole('group').filter({ hasText: 'TEST_SM99_Таблица' });
+    await expect(tableCard).toBeVisible({ timeout: 60_000 });
+    await expect(tableCard.getByRole('listitem').filter({ hasText: 'Название' })).toBeVisible();
+  });
 });

@@ -8,16 +8,21 @@ test('SM-109 «Новый пакет сбора данных», без созд�
   await page.goto(url);
   await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
 
-  // Шаг 1. Стрелка ▾ у «+ Документ» → «Дополнительно» → «Новый пакет сбора данных»
-  // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим
-  await page.getByRole('main').getByRole('button', { name: 'Новая таблица данных' }).click();
-  await page.getByRole('menuitem', { name: 'Дополнительно' }).hover();
-  await page.getByRole('menuitem', { name: 'Новый пакет сбора данных' }).click();
-  const packageDialog = page.getByRole('dialog', { name: 'Новый пакет сбора данных' });
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let packageDialog;
 
-  // Ожидание: после шага 1 видна кнопка «Создать пакет»
-  await expect(packageDialog.getByRole('button', { name: 'Создать пакет' })).toBeVisible();
+  await test.step('Шаг 1. Стрелка ▾ у «+ Документ» → «Дополнительно» → «Новый пакет сбора данных»', async () => {
+    // У стрелки название «Новая таблица данных» (так в продукте), по нему и находим
+    await page.getByRole('main').getByRole('button', { name: 'Новая таблица данных' }).click();
+    await page.getByRole('menuitem', { name: 'Дополнительно' }).hover();
+    await page.getByRole('menuitem', { name: 'Новый пакет сбора данных' }).click();
+    packageDialog = page.getByRole('dialog', { name: 'Новый пакет сбора данных' });
 
-  // Шаг 2. Закрыть окно (кнопку «Создать пакет» не нажимаем)
-  await packageDialog.getByRole('button', { name: 'Close' }).click();
+    // Ожидание: после шага 1 видна кнопка «Создать пакет»
+    await expect(packageDialog.getByRole('button', { name: 'Создать пакет' })).toBeVisible();
+  });
+
+  await test.step('Шаг 2. Закрыть окно', async () => {
+    await packageDialog.getByRole('button', { name: 'Close' }).click();
+  });
 });

@@ -16,19 +16,22 @@ test('SM-75 «Свернуть панель»', async ({ page }) => {
     return !!hit && el.contains(hit);
   });
 
-  // Шаг 1. Открыть навигатор пространства прогона
-  await page.goto(url);
-  await expect(filter).toBeVisible({ timeout: 60_000 });
+  await test.step('Шаг 1. Открыть навигатор пространства прогона', async () => {
+    await page.goto(url);
+    await expect(filter).toBeVisible({ timeout: 60_000 });
+  });
 
-  // Шаг 2. Нажать «Свернуть панель» (стрелка «<» вверху панели)
-  await collapse.click();
+  await test.step('Шаг 2. Нажать «Свернуть панель» (стрелка «<» вверху панели)', async () => {
+    await collapse.click();
 
-  // Ожидание 1: поле «Фильтр по имени или #тегу…» не видно
-  await expect.poll(filterSeen, { message: 'поле фильтра скрыто' }).toBe(false);
+    // Ожидание 1: поле «Фильтр по имени или #тегу…» не видно
+    await expect.poll(filterSeen, { message: 'поле фильтра скрыто' }).toBe(false);
+  });
 
-  // Шаг 3. Нажать «Развернуть панель» (стрелка «>» на узкой полосе слева)
-  await expand.click();
+  await test.step('Шаг 3. Нажать стрелку «>» на узкой полосе слева', async () => {
+    await expand.click();
 
-  // Ожидание 2: поле «Фильтр по имени или #тегу…» снова видно
-  await expect.poll(filterSeen, { message: 'поле фильтра снова видно' }).toBe(true);
+    // Ожидание 2: поле «Фильтр по имени или #тегу…» снова видно
+    await expect.poll(filterSeen, { message: 'поле фильтра снова видно' }).toBe(true);
+  });
 });

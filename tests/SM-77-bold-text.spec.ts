@@ -22,24 +22,27 @@ test('SM-77 Жирный шрифт', async ({ page }) => {
     await page.keyboard.type('Проверка смоук текста 123');
   });
 
-  // Шаг 1. Открыть TEST_SM77_Текст
-  await treeItem(page, 'TEST_SM77_Текст').click();
-  await expect(editor).toContainText('Проверка смоук текста 123');
-
-  // Шаг 2. Выделить слово «Проверка» (первые 8 букв первого абзаца)
-  await editor.evaluate((el) => {
-    const text = el.querySelector('p')!.firstChild!;
-    const range = document.createRange();
-    range.setStart(text, 0);
-    range.setEnd(text, 'Проверка'.length);
-    const selection = window.getSelection()!;
-    selection.removeAllRanges();
-    selection.addRange(range);
+  await test.step('Шаг 1. Открыть TEST_SM77_Текст', async () => {
+    await treeItem(page, 'TEST_SM77_Текст').click();
+    await expect(editor).toContainText('Проверка смоук текста 123');
   });
 
-  // Шаг 3. Нажать Ctrl+B (на Mac — Cmd+B)
-  await page.keyboard.press('ControlOrMeta+b');
+  await test.step('Шаг 2. Выделить слово «Проверка»', async () => {
+    await editor.evaluate((el) => {
+      const text = el.querySelector('p')!.firstChild!;
+      const range = document.createRange();
+      range.setStart(text, 0);
+      range.setEnd(text, 'Проверка'.length);
+      const selection = window.getSelection()!;
+      selection.removeAllRanges();
+      selection.addRange(range);
+    });
+  });
 
-  // Ожидание: слово «Проверка» жирное (жирный текст редактора — <strong>, роль strong)
-  await expect(editor.getByRole('strong')).toHaveText('Проверка');
+  await test.step('Шаг 3. Нажать Ctrl+B', async () => {
+    await page.keyboard.press('ControlOrMeta+b');
+
+    // Ожидание: слово «Проверка» жирное (жирный текст редактора — <strong>, роль strong)
+    await expect(editor.getByRole('strong')).toHaveText('Проверка');
+  });
 });

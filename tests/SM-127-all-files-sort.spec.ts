@@ -30,29 +30,32 @@ test('SM-127 «Сортировка»', async ({ page }) => {
     }
   });
 
-  // Шаг 1. «Все файлы» → «Список»
-  // После предусловия открыт документ, а «Все файлы» есть только на главной навигатора, поэтому открываем навигатор заново
-  await page.goto(url);
-  await panel.getByRole('button', { name: 'Все файлы' }).click({ timeout: 60_000 });
-  await panel.getByRole('button', { name: 'Список', exact: true }).click();
-  await expect(panel.getByRole('table')).toBeVisible();
+  await test.step('Шаг 1. «Все файлы» → «Список»', async () => {
+    // После предусловия открыт документ, а «Все файлы» есть только на главной навигатора, поэтому открываем навигатор заново
+    await page.goto(url);
+    await panel.getByRole('button', { name: 'Все файлы' }).click({ timeout: 60_000 });
+    await panel.getByRole('button', { name: 'Список', exact: true }).click();
+    await expect(panel.getByRole('table')).toBeVisible();
+  });
 
-  // Шаг 2. «Сортировка» → «Дата создания», «По убыванию»
-  await chooseSort('Дата создания');
-  await chooseSort('По убыванию');
+  await test.step('Шаг 2. «Сортировка» → «Дата создания», «По убыванию»', async () => {
+    await chooseSort('Дата создания');
+    await chooseSort('По убыванию');
 
-  // Ожидание: TEST_SM127_Б выше TEST_SM127_А (индекс строки Б меньше индекса строки А, обе найдены)
-  await expect.poll(async () => {
-    const texts = await rows.allInnerTexts();
-    const indexB = texts.findIndex((t) => t.includes('TEST_SM127_Б'));
-    const indexA = texts.findIndex((t) => t.includes('TEST_SM127_А'));
-    return indexB >= 0 && indexA > indexB;
-  }).toBe(true);
+    // Ожидание: TEST_SM127_Б выше TEST_SM127_А (индекс строки Б меньше индекса строки А, обе найдены)
+    await expect.poll(async () => {
+      const texts = await rows.allInnerTexts();
+      const indexB = texts.findIndex((t) => t.includes('TEST_SM127_Б'));
+      const indexA = texts.findIndex((t) => t.includes('TEST_SM127_А'));
+      return indexB >= 0 && indexA > indexB;
+    }).toBe(true);
+  });
 
-  // Шаг 3. «Сортировка» → «Название», «По возрастанию», затем нажать «Плитки» (вернуть карточки)
-  // Это возврат исходных настроек просмотра
-  await chooseSort('Название');
-  await chooseSort('По возрастанию');
-  await panel.getByRole('button', { name: 'Плитки', exact: true }).click();
-  await expect(panel.getByRole('table')).toBeHidden();
+  await test.step('Шаг 3. «Сортировка» → «Название», «По возрастанию», затем нажать «Плитки» (вернуть карточки)', async () => {
+    // Это возврат исходных настроек просмотра
+    await chooseSort('Название');
+    await chooseSort('По возрастанию');
+    await panel.getByRole('button', { name: 'Плитки', exact: true }).click();
+    await expect(panel.getByRole('table')).toBeHidden();
+  });
 });

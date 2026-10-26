@@ -8,30 +8,37 @@ test('SM-31 Тёмная тема и возврат', async ({ page }) => {
   // eslint-disable-next-line playwright/no-raw-locators -- тема — свойство корня документа, у <html> нет роли
   const html = page.locator('html');
 
-  // Шаг 1. Открыть /projects → кнопка профиля, запомнить выбранную тему в «Оформление»
-  await page.goto('/projects');
-  await profileButton.click({ timeout: 60_000 });
-  await expect(menu.getByRole('button', { name: 'Тёмная' })).toBeVisible();
-  const pressed = await menu.getByRole('button', { pressed: true }).allTextContents();
-  const originalTheme = pressed.find((t) => themes.includes(t))!;
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let pressed, originalTheme;
 
-  // Шаг 2. В «Оформление» выбрать «Тёмная»
-  await menu.getByRole('button', { name: 'Тёмная' }).click();
+  await test.step('Шаг 1. Открыть /projects → кнопка профиля, запомнить выбранную тему в «Оформление»', async () => {
+    await page.goto('/projects');
+    await profileButton.click({ timeout: 60_000 });
+    await expect(menu.getByRole('button', { name: 'Тёмная' })).toBeVisible();
+    pressed = await menu.getByRole('button', { pressed: true }).allTextContents();
+    originalTheme = pressed.find((t) => themes.includes(t))!;
+  });
 
-  // Ожидание 1: страница в тёмной теме
-  await expect(html).toHaveCSS('color-scheme', 'dark');
+  await test.step('Шаг 2. В «Оформление» выбрать «Тёмная»', async () => {
+    await menu.getByRole('button', { name: 'Тёмная' }).click();
 
-  // Шаг 3. Перезагрузить страницу
-  await page.reload();
+    // Ожидание 1: страница в тёмной теме
+    await expect(html).toHaveCSS('color-scheme', 'dark');
+  });
 
-  // Ожидание 2: страница в тёмной теме
-  await expect(page.getByRole('heading', { name: 'Пространства', exact: true })).toBeVisible({ timeout: 60_000 });
-  await expect(html).toHaveCSS('color-scheme', 'dark');
+  await test.step('Шаг 3. Перезагрузить страницу', async () => {
+    await page.reload();
 
-  // Шаг 4. Кнопка профиля → «Оформление» → исходная тема из шага 1
-  await profileButton.click();
-  await menu.getByRole('button', { name: originalTheme, exact: true }).click();
+    // Ожидание 2: страница в тёмной теме
+    await expect(page.getByRole('heading', { name: 'Пространства', exact: true })).toBeVisible({ timeout: 60_000 });
+    await expect(html).toHaveCSS('color-scheme', 'dark');
+  });
 
-  // Ожидание 3: в «Оформление» снова выбрана исходная тема
-  await expect(menu.getByRole('button', { name: originalTheme, exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await test.step('Шаг 4. Кнопка профиля → «Оформление» → исходная тема из шага 1', async () => {
+    await profileButton.click();
+    await menu.getByRole('button', { name: originalTheme, exact: true }).click();
+
+    // Ожидание 3: в «Оформление» снова выбрана исходная тема
+    await expect(menu.getByRole('button', { name: originalTheme, exact: true })).toHaveAttribute('aria-pressed', 'true');
+  });
 });

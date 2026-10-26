@@ -20,15 +20,19 @@ test('SM-120 ⋮ → «Открыть в новом окне»', async ({ page, 
     await expect(doc).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM120_Текст → «Открыть в новом окне»
-  await openTreeItemActions(doc);
-  const newPagePromise = context.waitForEvent('page');
-  await page.getByRole('menuitem', { name: 'Открыть в новом окне' }).click();
-  const newPage = await newPagePromise;
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let newPagePromise, newPage;
 
-  // Ожидание: открылась новая вкладка с заголовком «TEST_SM120_Текст — <пространство прогона>»
-  await expect(newPage).toHaveTitle(`TEST_SM120_Текст — ${name}`, { timeout: 60_000 });
+  await test.step('Шаг 1. ⋮ у TEST_SM120_Текст → «Открыть в новом окне»', async () => {
+    await openTreeItemActions(doc);
+    newPagePromise = context.waitForEvent('page');
+    await page.getByRole('menuitem', { name: 'Открыть в новом окне' }).click();
+    newPage = await newPagePromise;
 
-  // Закрыть новую вкладку
-  await newPage.close();
+    // Ожидание: открылась новая вкладка с заголовком «TEST_SM120_Текст — <пространство прогона>»
+    await expect(newPage).toHaveTitle(`TEST_SM120_Текст — ${name}`, { timeout: 60_000 });
+
+    // Закрыть новую вкладку
+    await newPage.close();
+  });
 });

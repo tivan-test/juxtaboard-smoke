@@ -23,27 +23,33 @@ test('SM-124 Звёздочка на главной пространства', a
     await expect(page.getByRole('textbox', { name: 'Текст документа' })).toBeVisible({ timeout: 30_000 });
   });
 
-  // Шаг 1. Открыть навигатор пространства прогона → «Главная»
-  await openSpace(page, url);
-  await panel.getByRole('button', { name: 'Главная' }).click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let card;
 
-  // Карточка документа в «Недавно открытые»: блок, где есть и название, и кнопка «Убрать из недавних»
-  // (у карточки нет роли; последний подходящий блок — самый вложенный, то есть сама карточка)
-  // eslint-disable-next-line playwright/no-raw-locators, playwright/no-nth-methods -- пробел приложения: карточка недавнего документа — div без роли и названия
-  const card = recent.locator('div').filter({ has: page.getByText('TEST_SM124_Текст', { exact: true }) }).filter({ has: page.getByRole('button', { name: 'Убрать из недавних' }) }).last();
-  await expect(card).toBeVisible({ timeout: 30_000 });
+  await test.step('Шаг 1. Открыть навигатор пространства прогона → «Главная»', async () => {
+    await openSpace(page, url);
+    await panel.getByRole('button', { name: 'Главная' }).click();
 
-  // Шаг 2. На карточке TEST_SM124_Текст в «Недавно открытые» нажать «В избранное»
-  await card.hover();
-  await card.getByRole('button', { name: 'В избранное' }).click();
+    // Карточка документа в «Недавно открытые»: блок, где есть и название, и кнопка «Убрать из недавних»
+    // (у карточки нет роли; последний подходящий блок — самый вложенный, то есть сама карточка)
+    // eslint-disable-next-line playwright/no-raw-locators, playwright/no-nth-methods -- пробел приложения: карточка недавнего документа — div без роли и названия
+    card = recent.locator('div').filter({ has: page.getByText('TEST_SM124_Текст', { exact: true }) }).filter({ has: page.getByRole('button', { name: 'Убрать из недавних' }) }).last();
+    await expect(card).toBeVisible({ timeout: 30_000 });
+  });
 
-  // Ожидание 1: TEST_SM124_Текст в разделе «Избранное»
-  await expect(favorites.getByText('TEST_SM124_Текст', { exact: true })).toBeVisible();
+  await test.step('Шаг 2. На карточке TEST_SM124_Текст в «Недавно открытые» нажать «В избранное»', async () => {
+    await card.hover();
+    await card.getByRole('button', { name: 'В избранное' }).click();
 
-  // Шаг 3. Нажать звёздочку ещё раз
-  await card.hover();
-  await card.getByRole('button', { name: 'Убрать из избранного' }).click();
+    // Ожидание 1: TEST_SM124_Текст в разделе «Избранное»
+    await expect(favorites.getByText('TEST_SM124_Текст', { exact: true })).toBeVisible();
+  });
 
-  // Ожидание 2: в «Избранном» TEST_SM124_Текст нет (звёздочка снята — исходное состояние восстановлено)
-  await expect(favorites.getByText('TEST_SM124_Текст', { exact: true })).toBeHidden();
+  await test.step('Шаг 3. Нажать звёздочку ещё раз', async () => {
+    await card.hover();
+    await card.getByRole('button', { name: 'Убрать из избранного' }).click();
+
+    // Ожидание 2: в «Избранном» TEST_SM124_Текст нет (звёздочка снята — исходное состояние восстановлено)
+    await expect(favorites.getByText('TEST_SM124_Текст', { exact: true })).toBeHidden();
+  });
 });

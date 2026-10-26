@@ -25,28 +25,34 @@ test('SM-118 ⋮ → «Свойства документа»', async ({ page }) 
     await expect(doc).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM118_Текст → «Свойства документа»
-  await openProps();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let saved;
 
-  // Шаг 2. В блоке «Свойства документа» ввести имя «TEST_свойство», значение «42», нажать «+» («Добавить»)
-  // В окне два блока: «Свойства проекта» (первый) и «Свойства документа» (последний). Нужен последний, проектные не трогаем.
-  // У блоков нет роли и названия (заголовок блока — простой текст), поэтому отличить их можно только по порядку.
-  // eslint-disable-next-line playwright/no-nth-methods -- пробел приложения: блок «Свойства документа» без роли/названия
-  await propsDialog.getByRole('textbox', { name: 'Имя' }).last().fill('TEST_свойство');
-  // eslint-disable-next-line playwright/no-nth-methods -- пробел приложения: блок «Свойства документа» без роли/названия
-  await propsDialog.getByRole('textbox', { name: 'Значение' }).last().fill('42');
-  const saved = page.waitForResponse((r) => r.request().method() === 'POST' && /\/document-properties/.test(r.url()));
-  // eslint-disable-next-line playwright/no-nth-methods -- пробел приложения: блок «Свойства документа» без роли/названия
-  await propsDialog.getByRole('button', { name: 'Добавить', exact: true }).last().click();
-  expect((await saved).ok()).toBe(true);
+  await test.step('Шаг 1. ⋮ у TEST_SM118_Текст → «Свойства документа»', async () => {
+    await openProps();
+  });
 
-  // Шаг 3. Закрыть окно, перезагрузить страницу, снова открыть «Свойства документа»
-  await propsDialog.getByRole('button', { name: 'Закрыть' }).click();
-  await expect(propsDialog).toBeHidden();
-  await page.reload();
-  await expect(doc).toBeVisible({ timeout: 60_000 });
-  await openProps();
+  await test.step('Шаг 2. В блоке «Свойства документа» ввести имя «TEST_свойство», значение «42», нажать «+»', async () => {
+    // В окне два блока: «Свойства проекта» (первый) и «Свойства документа» (последний). Нужен последний, проектные не трогаем.
+    // У блоков нет роли и названия (заголовок блока — простой текст), поэтому отличить их можно только по порядку.
+    // eslint-disable-next-line playwright/no-nth-methods -- пробел приложения: блок «Свойства документа» без роли/названия
+    await propsDialog.getByRole('textbox', { name: 'Имя' }).last().fill('TEST_свойство');
+    // eslint-disable-next-line playwright/no-nth-methods -- пробел приложения: блок «Свойства документа» без роли/названия
+    await propsDialog.getByRole('textbox', { name: 'Значение' }).last().fill('42');
+    saved = page.waitForResponse((r) => r.request().method() === 'POST' && /\/document-properties/.test(r.url()));
+    // eslint-disable-next-line playwright/no-nth-methods -- пробел приложения: блок «Свойства документа» без роли/названия
+    await propsDialog.getByRole('button', { name: 'Добавить', exact: true }).last().click();
+    expect((await saved).ok()).toBe(true);
+  });
 
-  // Ожидание: видно «TEST_свойство» = «42»
-  await expect(propsDialog).toContainText(/TEST_свойство\s*=\s*42/);
+  await test.step('Шаг 3. Закрыть окно, перезагрузить страницу, снова открыть «Свойства документа»', async () => {
+    await propsDialog.getByRole('button', { name: 'Закрыть' }).click();
+    await expect(propsDialog).toBeHidden();
+    await page.reload();
+    await expect(doc).toBeVisible({ timeout: 60_000 });
+    await openProps();
+
+    // Ожидание: видно «TEST_свойство» = «42»
+    await expect(propsDialog).toContainText(/TEST_свойство\s*=\s*42/);
+  });
 });

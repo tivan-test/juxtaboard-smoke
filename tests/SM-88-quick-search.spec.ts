@@ -13,21 +13,27 @@ test('SM-88 Поиск «Быстрый»', async ({ page }) => {
     await setUpDataTable(page, url, { name: 'TEST_SM88_Таблица', rows: ['Строка смоук', 'Другая строка'] });
   });
 
-  // Шаг 1. Открыть TEST_SM88_Таблица
-  await treeItem(page, 'TEST_SM88_Таблица').click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let quickSearch;
 
-  // Шаг 2. Ввести в поле «Быстрый» «смоук»
-  // Поле называется «Быстрый поиск» (в таблице так подписано)
-  const quickSearch = main.getByRole('textbox', { name: 'Быстрый поиск' });
-  await quickSearch.fill('смоук');
+  await test.step('Шаг 1. Открыть TEST_SM88_Таблица', async () => {
+    await treeItem(page, 'TEST_SM88_Таблица').click();
+  });
 
-  // Ожидание 1: после шага 2 видна только строка «Строка смоук»
-  await expect(gridRow(grid, 'Строка смоук')).toBeVisible();
-  await expect(gridRow(grid, 'Другая строка')).toBeHidden();
+  await test.step('Шаг 2. Ввести в поле «Быстрый» «смоук»', async () => {
+    // Поле называется «Быстрый поиск» (в таблице так подписано)
+    quickSearch = main.getByRole('textbox', { name: 'Быстрый поиск' });
+    await quickSearch.fill('смоук');
 
-  // Шаг 3. Заменить текст в поле на «неттакого»
-  await quickSearch.fill('неттакого');
+    // Ожидание 1: после шага 2 видна только строка «Строка смоук»
+    await expect(gridRow(grid, 'Строка смоук')).toBeVisible();
+    await expect(gridRow(grid, 'Другая строка')).toBeHidden();
+  });
 
-  // Ожидание 2: после шага 3 строк не видно
-  await expect(main.getByRole('button', { name: 'Открыть запись' })).toHaveCount(0);
+  await test.step('Шаг 3. Заменить текст в поле на «неттакого»', async () => {
+    await quickSearch.fill('неттакого');
+
+    // Ожидание 2: после шага 3 строк не видно
+    await expect(main.getByRole('button', { name: 'Открыть запись' })).toHaveCount(0);
+  });
 });

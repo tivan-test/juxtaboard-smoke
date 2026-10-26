@@ -13,18 +13,23 @@ test('SM-94 «Данные» → «Журнал изменений»', async ({ 
     await setUpDataTable(page, url, { name: 'TEST_SM94_Таблица', rows: ['Строка журнал'] });
   });
 
-  // Шаг 1. Открыть TEST_SM94_Таблица
-  await tableItem.click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let journal, change;
 
-  // Шаг 2. Нажать «Данные» → «Журнал изменений»
-  await main.getByRole('button', { name: 'Данные', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Журнал изменений', exact: true }).click();
+  await test.step('Шаг 1. Открыть TEST_SM94_Таблица', async () => {
+    await tableItem.click();
+  });
 
-  // Ожидание: есть запись «ИЗМЕНЕНО» со значением «Строка журнал»
-  const journal = page.getByRole('dialog', { name: 'Журнал изменений' });
-  // «Изменено» есть и как пункт фильтра «Операция» (скрытый), поэтому берём только видимое
-  await expect(journal.getByText('Изменено', { exact: true }).filter({ visible: true })).toBeVisible();
-  // Запись журнала — listitem со своим списком правок (тоже listitem); проверяем запись, где есть правка со значением
-  const change = page.getByRole('listitem').filter({ hasText: 'Строка журнал', hasNot: page.getByRole('listitem') });
-  await expect(journal.getByRole('listitem').filter({ has: change })).toBeVisible();
+  await test.step('Шаг 2. Нажать «Данные» → «Журнал изменений»', async () => {
+    await main.getByRole('button', { name: 'Данные', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Журнал изменений', exact: true }).click();
+
+    // Ожидание: есть запись «ИЗМЕНЕНО» со значением «Строка журнал»
+    journal = page.getByRole('dialog', { name: 'Журнал изменений' });
+    // «Изменено» есть и как пункт фильтра «Операция» (скрытый), поэтому берём только видимое
+    await expect(journal.getByText('Изменено', { exact: true }).filter({ visible: true })).toBeVisible();
+    // Запись журнала — listitem со своим списком правок (тоже listitem); проверяем запись, где есть правка со значением
+    change = page.getByRole('listitem').filter({ hasText: 'Строка журнал', hasNot: page.getByRole('listitem') });
+    await expect(journal.getByRole('listitem').filter({ has: change })).toBeVisible();
+  });
 });

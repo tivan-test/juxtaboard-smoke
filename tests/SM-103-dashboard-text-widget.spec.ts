@@ -19,23 +19,30 @@ test('SM-103 Виджет «Текст»', async ({ page }) => {
     await expect(dashItem).toBeVisible();
   });
 
-  // Шаг 1. Открыть TEST_SM103_Дашборд → «Начать редактирование»
-  await dashItem.click();
-  await page.getByRole('button', { name: 'Начать редактирование' }).click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let dashboardSaved;
 
-  // Шаг 2. «Добавить текст», заменить текст виджета на «Заголовок дашборда»
-  await page.getByRole('button', { name: 'Добавить текст' }).click();
-  await page.getByRole('textbox', { name: 'Введите подпись или заметку…' }).fill('Заголовок дашборда');
+  await test.step('Шаг 1. Открыть TEST_SM103_Дашборд → «Начать редактирование»', async () => {
+    await dashItem.click();
+    await page.getByRole('button', { name: 'Начать редактирование' }).click();
+  });
 
-  // Шаг 3. Нажать «Готово»
-  // Кнопка «Редактировать» появляется сразу, а сохранение идёт следом запросом PUT /dashboards/<id> — ждём его
-  const dashboardSaved = page.waitForResponse((r) => r.request().method() === 'PUT' && /\/dashboards\//.test(r.url()));
-  await page.getByRole('button', { name: 'Готово' }).click();
-  expect((await dashboardSaved).ok()).toBe(true);
+  await test.step('Шаг 2. «Добавить текст», заменить текст виджета на «Заголовок дашборда»', async () => {
+    await page.getByRole('button', { name: 'Добавить текст' }).click();
+    await page.getByRole('textbox', { name: 'Введите подпись или заметку…' }).fill('Заголовок дашборда');
+  });
 
-  // Шаг 4. Перезагрузить страницу
-  await page.reload();
+  await test.step('Шаг 3. Нажать «Готово»', async () => {
+    // Кнопка «Редактировать» появляется сразу, а сохранение идёт следом запросом PUT /dashboards/<id> — ждём его
+    dashboardSaved = page.waitForResponse((r) => r.request().method() === 'PUT' && /\/dashboards\//.test(r.url()));
+    await page.getByRole('button', { name: 'Готово' }).click();
+    expect((await dashboardSaved).ok()).toBe(true);
+  });
 
-  // Ожидание: виден текст «Заголовок дашборда»
-  await expect(page.getByText('Заголовок дашборда')).toBeVisible({ timeout: 60_000 });
+  await test.step('Шаг 4. Перезагрузить страницу', async () => {
+    await page.reload();
+
+    // Ожидание: виден текст «Заголовок дашборда»
+    await expect(page.getByText('Заголовок дашборда')).toBeVisible({ timeout: 60_000 });
+  });
 });

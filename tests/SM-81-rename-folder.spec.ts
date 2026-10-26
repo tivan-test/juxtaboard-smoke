@@ -18,25 +18,32 @@ test('SM-81 Переименование папки с иконкой', async ({
     await expect(oldFolder).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM81_Папка → «Переименовать»
-  await openTreeItemActions(oldFolder);
-  await page.getByRole('menuitem', { name: 'Переименовать' }).click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let dialog;
 
-  // Шаг 2. Ввести «TEST_SM81_Новое», выбрать любую иконку (здесь «customers»)
-  const dialog = page.getByRole('dialog', { name: 'Переименовать папку' });
-  await dialog.getByRole('textbox', { name: 'Название папки' }).fill('TEST_SM81_Новое');
-  await dialog.getByRole('button', { name: 'customers', exact: true }).click();
+  await test.step('Шаг 1. ⋮ у TEST_SM81_Папка → «Переименовать»', async () => {
+    await openTreeItemActions(oldFolder);
+    await page.getByRole('menuitem', { name: 'Переименовать' }).click();
+  });
 
-  // Шаг 3. Нажать «Переименовать»
-  await dialog.getByRole('button', { name: 'Переименовать', exact: true }).click();
-  await expect(dialog).toBeHidden();
+  await test.step('Шаг 2. Ввести «TEST_SM81_Новое», выбрать любую иконку', async () => {
+    dialog = page.getByRole('dialog', { name: 'Переименовать папку' });
+    await dialog.getByRole('textbox', { name: 'Название папки' }).fill('TEST_SM81_Новое');
+    await dialog.getByRole('button', { name: 'customers', exact: true }).click();
+  });
 
-  // Шаг 4. Перезагрузить страницу
-  await page.reload();
+  await test.step('Шаг 3. Нажать «Переименовать»', async () => {
+    await dialog.getByRole('button', { name: 'Переименовать', exact: true }).click();
+    await expect(dialog).toBeHidden();
+  });
 
-  // Ожидание: в дереве «TEST_SM81_Новое»
-  await expect(newFolder).toBeVisible({ timeout: 60_000 });
+  await test.step('Шаг 4. Перезагрузить страницу', async () => {
+    await page.reload();
 
-  // Ожидание: «TEST_SM81_Папка» в дереве нет
-  await expect(oldFolder).toHaveCount(0);
+    // Ожидание: в дереве «TEST_SM81_Новое»
+    await expect(newFolder).toBeVisible({ timeout: 60_000 });
+
+    // Ожидание: «TEST_SM81_Папка» в дереве нет
+    await expect(oldFolder).toHaveCount(0);
+  });
 });

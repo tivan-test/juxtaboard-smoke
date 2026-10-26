@@ -34,18 +34,20 @@ test('SM-65 Поиск ресурса по #тегу', async ({ page }) => {
     expect((await saved).ok()).toBe(true);
   });
 
-  // Шаг 1. Открыть «Библиотека ресурсов»
-  await page.goto(url);
-  await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
-  await page.getByRole('banner').getByRole('button', { name: 'Структуры проекта' }).click();
-  await page.getByRole('dialog').getByRole('link', { name: 'Библиотека ресурсов' }).click();
+  await test.step('Шаг 1. Открыть «Библиотека ресурсов»', async () => {
+    await page.goto(url);
+    await expect(page.getByRole('banner').getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
+    await page.getByRole('banner').getByRole('button', { name: 'Структуры проекта' }).click();
+    await page.getByRole('dialog').getByRole('link', { name: 'Библиотека ресурсов' }).click();
+  });
 
-  // Шаг 2. Ввести в поиск «#TEST_sm65»
-  await page.getByRole('textbox', { name: 'Поиск по имени или группе · #тег — фильтр' }).fill('#TEST_sm65');
+  await test.step('Шаг 2. Ввести в поиск «#TEST_sm65»', async () => {
+    await page.getByRole('textbox', { name: 'Поиск по имени или группе · #тег — фильтр' }).fill('#TEST_sm65');
 
-  // Ожидание 1: видно «Показано 1 из 1»
-  await expect(page.getByText('Показано 1 из 1')).toBeVisible();
+    // Ожидание 1: видно «Показано 1 из 1»
+    await expect(page.getByText('Показано 1 из 1')).toBeVisible();
 
-  // Ожидание 2: видна карточка «TEST_SM65.png»
-  await expect(card).toBeVisible();
+    // Ожидание 2: видна карточка «TEST_SM65.png»
+    await expect(card).toBeVisible();
+  });
 });

@@ -20,20 +20,23 @@ test('SM-136 «Стиль абзаца» и «Структура докумен�
     await expect(editor).toBeVisible({ timeout: 30_000 });
   });
 
-  // Шаг 1. Открыть TEST_SM136_Текст, поставить курсор в новую строку (документ пустой — просто клик в редактор)
-  await treeItem(page, 'TEST_SM136_Текст').click();
-  await expect(editor).toBeVisible();
-  await editor.click();
+  await test.step('Шаг 1. Открыть TEST_SM136_Текст, поставить курсор в новую строку', async () => {
+    await treeItem(page, 'TEST_SM136_Текст').click();
+    await expect(editor).toBeVisible();
+    await editor.click();
+  });
 
-  // Шаг 2. «Стиль абзаца» → «Заголовок 1», ввести «TEST заголовок»
-  await page.getByRole('button', { name: 'Стиль абзаца' }).click();
-  await page.getByRole('menuitem', { name: 'Заголовок 1', exact: true }).click();
-  await page.keyboard.type('TEST заголовок');
-  await expect(editor.getByRole('heading', { level: 1 })).toHaveText('TEST заголовок');
+  await test.step('Шаг 2. «Стиль абзаца» → «Заголовок 1», ввести «TEST заголовок»', async () => {
+    await page.getByRole('button', { name: 'Стиль абзаца' }).click();
+    await page.getByRole('menuitem', { name: 'Заголовок 1', exact: true }).click();
+    await page.keyboard.type('TEST заголовок');
+    await expect(editor.getByRole('heading', { level: 1 })).toHaveText('TEST заголовок');
+  });
 
-  // Шаг 3. Нажать «Структура документа»
-  await outlineButton.click();
+  await test.step('Шаг 3. Нажать «Структура документа»', async () => {
+    await outlineButton.click();
 
-  // Ожидание: в структуре есть «TEST заголовок»
-  await expect(page.getByRole('dialog').getByText('TEST заголовок')).toBeVisible();
+    // Ожидание: в структуре есть «TEST заголовок»
+    await expect(page.getByRole('dialog').getByText('TEST заголовок')).toBeVisible();
+  });
 });

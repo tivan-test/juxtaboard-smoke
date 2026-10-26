@@ -8,26 +8,33 @@ test('SM-76 Новый документ с текстом', async ({ page }) => 
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
   const editor = documentEditor(page);
 
-  // Шаг 1. Открыть навигатор пространства прогона
-  await openSpace(page, url);
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let createDialog;
 
-  // Шаг 2. Нажать «+ Документ», ввести название «TEST_SM76_Текст», нажать «Создать»
-  await navigatorButton(page, 'Документ').click();
-  const createDialog = page.getByRole('dialog', { name: 'Создать документ' });
-  await createDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM76_Текст');
-  await createDialog.getByRole('button', { name: 'Создать' }).click();
+  await test.step('Шаг 1. Открыть навигатор пространства прогона', async () => {
+    await openSpace(page, url);
+  });
 
-  // Ожидание 1: открылся редактор, «TEST_SM76_Текст» есть в дереве
-  await expect(editor).toBeVisible({ timeout: 30_000 });
-  await expect(treeItem(page, 'TEST_SM76_Текст')).toBeVisible();
+  await test.step('Шаг 2. Нажать «+ Документ», ввести название «TEST_SM76_Текст», нажать «Создать»', async () => {
+    await navigatorButton(page, 'Документ').click();
+    createDialog = page.getByRole('dialog', { name: 'Создать документ' });
+    await createDialog.getByRole('textbox', { name: 'Название документа' }).fill('TEST_SM76_Текст');
+    await createDialog.getByRole('button', { name: 'Создать' }).click();
 
-  // Шаг 3. В редакторе ввести «Проверка смоук текста 123»
-  await editor.click();
-  await page.keyboard.type('Проверка смоук текста 123');
+    // Ожидание 1: открылся редактор, «TEST_SM76_Текст» есть в дереве
+    await expect(editor).toBeVisible({ timeout: 30_000 });
+    await expect(treeItem(page, 'TEST_SM76_Текст')).toBeVisible();
+  });
 
-  // Шаг 4. Перезагрузить страницу
-  await page.reload();
+  await test.step('Шаг 3. В редакторе ввести «Проверка смоук текста 123»', async () => {
+    await editor.click();
+    await page.keyboard.type('Проверка смоук текста 123');
+  });
 
-  // Ожидание 2: в документе «Проверка смоук текста 123»
-  await expect(editor).toContainText('Проверка смоук текста 123', { timeout: 60_000 });
+  await test.step('Шаг 4. Перезагрузить страницу', async () => {
+    await page.reload();
+
+    // Ожидание 2: в документе «Проверка смоук текста 123»
+    await expect(editor).toContainText('Проверка смоук текста 123', { timeout: 60_000 });
+  });
 });

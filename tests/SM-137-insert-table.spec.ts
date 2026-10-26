@@ -20,14 +20,16 @@ test('SM-137 «Вставить таблицу»', async ({ page }) => {
     await expect(editor).toBeVisible({ timeout: 30_000 });
   });
 
-  // Шаг 1. Открыть TEST_SM137_Текст, поставить курсор в новую строку (документ пустой — просто клик в редактор)
-  await treeItem(page, 'TEST_SM137_Текст').click();
-  await expect(editor).toBeVisible();
-  await editor.click();
+  await test.step('Шаг 1. Открыть TEST_SM137_Текст, поставить курсор в новую строку', async () => {
+    await treeItem(page, 'TEST_SM137_Текст').click();
+    await expect(editor).toBeVisible();
+    await editor.click();
+  });
 
-  // Шаг 2. Нажать «Вставить таблицу»
-  await insertTableButton.click();
+  await test.step('Шаг 2. Нажать «Вставить таблицу»', async () => {
+    await insertTableButton.click();
 
-  // Ожидание: в документе появилась таблица
-  await expect(editor.getByRole('table')).toBeVisible();
+    // Ожидание: в документе появилась таблица
+    await expect(editor.getByRole('table')).toBeVisible();
+  });
 });

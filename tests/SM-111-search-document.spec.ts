@@ -18,22 +18,27 @@ test('SM-111 Поиск документа с главной', async ({ page }) 
     await expect(treeItem(page, 'TEST_SM111_Текст')).toBeVisible({ timeout: 30_000 });
   });
 
-  // Шаг 1. Открыть /projects, ввести в поиск «TEST_SM111»
-  await page.goto('/projects');
-  const search = page.getByRole('textbox', { name: 'Название пространства или документа…' });
-  await expect(search).toBeVisible({ timeout: 60_000 });
-  await search.fill('TEST_SM111');
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let search, docsGroup, result;
 
-  // Ожидание 1: «TEST_SM111_Текст» в группе «Документы», под ним название пространства прогона
-  // (название ссылки состоит из названия документа и названия пространства)
-  const docsGroup = page.getByRole('list', { name: 'Документы' });
-  const result = docsGroup.getByRole('link', { name: `TEST_SM111_Текст ${name}`, exact: true });
-  await expect(result).toBeVisible({ timeout: 30_000 });
+  await test.step('Шаг 1. Открыть /projects, ввести в поиск «TEST_SM111»', async () => {
+    await page.goto('/projects');
+    search = page.getByRole('textbox', { name: 'Название пространства или документа…' });
+    await expect(search).toBeVisible({ timeout: 60_000 });
+    await search.fill('TEST_SM111');
 
-  // Шаг 2. Нажать найденный «TEST_SM111_Текст»
-  await result.click();
+    // Ожидание 1: «TEST_SM111_Текст» в группе «Документы», под ним название пространства прогона
+    // (название ссылки состоит из названия документа и названия пространства)
+    docsGroup = page.getByRole('list', { name: 'Документы' });
+    result = docsGroup.getByRole('link', { name: `TEST_SM111_Текст ${name}`, exact: true });
+    await expect(result).toBeVisible({ timeout: 30_000 });
+  });
 
-  // Ожидание 2: открылся документ «TEST_SM111_Текст» (в заголовке вкладки его название, виден редактор)
-  await expect(page).toHaveTitle(new RegExp(`^TEST_SM111_Текст`), { timeout: 60_000 });
-  await expect(documentEditor(page)).toBeVisible({ timeout: 30_000 });
+  await test.step('Шаг 2. Нажать найденный «TEST_SM111_Текст»', async () => {
+    await result.click();
+
+    // Ожидание 2: открылся документ «TEST_SM111_Текст» (в заголовке вкладки его название, виден редактор)
+    await expect(page).toHaveTitle(new RegExp(`^TEST_SM111_Текст`), { timeout: 60_000 });
+    await expect(documentEditor(page)).toBeVisible({ timeout: 30_000 });
+  });
 });

@@ -13,18 +13,23 @@ test('SM-95 «Данные» → «Качество данных…»', async ({
     await setUpDataTable(page, url, { name: 'TEST_SM95_Таблица', rows: ['Строка качество'] });
   });
 
-  // Шаг 1. Открыть TEST_SM95_Таблица
-  await tableItem.click();
+  // Объявлено до шагов, потому что используется в нескольких шагах
+  let quality;
 
-  // Шаг 2. Нажать «Данные» → «Качество данных…»
-  await main.getByRole('button', { name: 'Данные', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Качество данных…', exact: true }).click();
-  const quality = page.getByRole('dialog', { name: 'Качество данных' });
+  await test.step('Шаг 1. Открыть TEST_SM95_Таблица', async () => {
+    await tableItem.click();
+  });
 
-  // Ожидание 1: «Строк» 1
-  // Показатель — группа (group), названная по подписи: в ней подпись и число
-  await expect(quality.getByRole('group', { name: 'Строк', exact: true })).toHaveText(/^Строк\s*1$/);
+  await test.step('Шаг 2. Нажать «Данные» → «Качество данных…»', async () => {
+    await main.getByRole('button', { name: 'Данные', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Качество данных…', exact: true }).click();
+    quality = page.getByRole('dialog', { name: 'Качество данных' });
 
-  // Ожидание 2: у столбца «Название» заполнено 100%
-  await expect(quality.getByRole('row', { name: /^Название/ }).getByRole('cell', { name: '100%' })).toBeVisible();
+    // Ожидание 1: «Строк» 1
+    // Показатель — группа (group), названная по подписи: в ней подпись и число
+    await expect(quality.getByRole('group', { name: 'Строк', exact: true })).toHaveText(/^Строк\s*1$/);
+
+    // Ожидание 2: у столбца «Название» заполнено 100%
+    await expect(quality.getByRole('row', { name: /^Название/ }).getByRole('cell', { name: '100%' })).toBeVisible();
+  });
 });

@@ -17,18 +17,21 @@ test('SM-82 Вложенная папка', async ({ page }) => {
     await expect(folder).toBeVisible();
   });
 
-  // Шаг 1. ⋮ у TEST_SM82_Папка → «Создать» → «Новая папка»
-  await openTreeItemActions(folder);
-  await page.getByRole('menuitem', { name: 'Создать' }).hover();
-  await page.getByRole('menu', { name: 'Создать' }).getByRole('menuitem', { name: 'Новая папка' }).click();
+  await test.step('Шаг 1. ⋮ у TEST_SM82_Папка → «Создать» → «Новая папка»', async () => {
+    await openTreeItemActions(folder);
+    await page.getByRole('menuitem', { name: 'Создать' }).hover();
+    await page.getByRole('menu', { name: 'Создать' }).getByRole('menuitem', { name: 'Новая папка' }).click();
+  });
 
-  // Шаг 2. Ввести «TEST_SM82_Вложенная», нажать Enter
-  await page.getByRole('dialog', { name: 'Создать папку' }).getByRole('textbox', { name: 'Название папки' }).fill('TEST_SM82_Вложенная');
-  await page.keyboard.press('Enter');
+  await test.step('Шаг 2. Ввести «TEST_SM82_Вложенная», нажать Enter', async () => {
+    await page.getByRole('dialog', { name: 'Создать папку' }).getByRole('textbox', { name: 'Название папки' }).fill('TEST_SM82_Вложенная');
+    await page.keyboard.press('Enter');
+  });
 
-  // Шаг 3. Раскрыть TEST_SM82_Папка — папка раскрывается сама после создания внутри неё, отдельного клика нет
-  // (повторное нажатие «Свернуть» свернуло бы её)
+  await test.step('Шаг 3. Раскрыть TEST_SM82_Папка', async () => {
+    // (повторное нажатие «Свернуть» свернуло бы её)
 
-  // Ожидание: внутри папки есть «TEST_SM82_Вложенная»
-  await expect(childTreeItem(folder, 'TEST_SM82_Вложенная')).toBeVisible();
+    // Ожидание: внутри папки есть «TEST_SM82_Вложенная»
+    await expect(childTreeItem(folder, 'TEST_SM82_Вложенная')).toBeVisible();
+  });
 });
