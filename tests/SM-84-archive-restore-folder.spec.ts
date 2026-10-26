@@ -44,12 +44,15 @@ test('SM-84 Архив и восстановление папки', async ({ pag
   await page.getByRole('menuitem', { name: 'Восстановить' }).click();
   await expect(folder).toHaveCount(0);
 
-  // Шаг 4. «Режимы отображения» → «Документы», раскрыть TEST_SM84_Папка (после восстановления папка свёрнута)
+  // Шаг 4. «Режимы отображения» → «Документы», нажать на название «TEST_SM84_Папка»
+  // Стрелку раскрытия не нажимаем: после восстановления папка бывает и свёрнутой, и раскрытой, клик по стрелке мог её свернуть
   await chooseViewMode(page, 'Документы');
   await expect(folder).toBeVisible();
-  await treeRow(folder).getByRole('button', { name: 'Развернуть' }).click();
+  await treeRow(folder).getByText('TEST_SM84_Папка', { exact: true }).click();
 
   // Ожидание 3: TEST_SM84_Папка в дереве, внутри TEST_SM84_Вложенная
+  // Содержимое открытой папки показывается справа от дерева: элементы дерева исключаем
   await expect(folder).toBeVisible();
-  await expect(nested).toBeVisible();
+  // eslint-disable-next-line playwright/no-raw-locators -- у правой части с содержимым папки нет своей роли; отличаем её от дерева, исключая всё внутри role=tree
+  await expect(page.getByRole('main').getByText('TEST_SM84_Вложенная', { exact: true }).and(page.locator(':not([role="tree"] *)'))).toBeVisible();
 });
