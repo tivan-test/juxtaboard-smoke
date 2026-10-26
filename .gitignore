@@ -1,3 +1,11 @@
-node_modules/
-auth/
-run-space.json
+# В git только tests/, файлы настройки проекта и .env.example (без паролей).
+# Всё остальное исключено: .env с паролем, auth/ с сессией, runs/, run-space.json, node_modules/ и т. д.
+/*
+!/tests/
+!/.gitignore
+!/package.json
+!/bun.lock
+!/eslint.config.mjs
+!/tsconfig.json
+!/playwright.config.ts
+!/.env.example
