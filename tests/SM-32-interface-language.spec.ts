@@ -12,7 +12,8 @@ test('SM-32 Язык EN и возврат на RU', async ({ page }) => {
   });
 
   await test.step('Шаг 2. В «Язык интерфейса» выбрать «EN»', async () => {
-    await menu.getByRole('button', { name: 'EN', exact: true }).click();
+    // На кнопках видно «EN» и «RU», а их доступные имена — «English» и «Русский»
+    await menu.getByRole('button', { name: 'English', exact: true }).click();
 
     // Ожидание 1: заголовок «Проекты» сменился английским
     await expect(pageTitle).toHaveText(/^[A-Za-z ]+$/);
@@ -21,7 +22,7 @@ test('SM-32 Язык EN и возврат на RU', async ({ page }) => {
   await test.step('Шаг 3. Кнопка профиля → «Язык интерфейса» → «RU»', async () => {
     await page.keyboard.press('Escape');
     await profileButton.click();
-    await menu.getByRole('button', { name: 'RU', exact: true }).click();
+    await menu.getByRole('button', { name: 'Русский', exact: true }).click();
 
     // Ожидание 2: снова виден заголовок «Проекты»
     await expect(pageTitle).toHaveText('Проекты');
