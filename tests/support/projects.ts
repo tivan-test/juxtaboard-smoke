@@ -6,15 +6,15 @@ import type { Locator, Page } from '@playwright/test';
 // ссылки-счётчики под заголовком страницы), а карточку — по её заголовку h3
 // с названием пространства. Внутри карточки всё уже по ролям.
 
-/** Раздел «Активные пространства». Раздел скрытых лежит внутри него */
+/** Раздел «Активные проекты». Раздел скрытых лежит внутри него */
 export function activeSpaces(page: Page) {
-  // eslint-disable-next-line playwright/no-raw-locators -- у раздела нет роли и имени; #active-spaces — якорь ссылки «Активных пространств: N»
+  // eslint-disable-next-line playwright/no-raw-locators -- у раздела нет роли и имени; #active-spaces — якорь ссылки «Активных проектов: N»
   return page.locator('#active-spaces');
 }
 
-/** Раздел «Скрытые пространства» (карточки в нём есть, только когда он раскрыт) */
+/** Раздел «Скрытые проекты» (карточки в нём есть, только когда он раскрыт) */
 export function hiddenSpaces(page: Page) {
-  // eslint-disable-next-line playwright/no-raw-locators -- у раздела нет роли и имени; #hidden-spaces — якорь ссылки «Скрытых пространств: M»
+  // eslint-disable-next-line playwright/no-raw-locators -- у раздела нет роли и имени; #hidden-spaces — якорь ссылки «Скрытых проектов: M»
   return page.locator('#hidden-spaces');
 }
 

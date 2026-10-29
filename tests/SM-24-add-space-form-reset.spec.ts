@@ -4,11 +4,11 @@ test('SM-24 Сброс формы по Esc', async ({ page }) => {
   // Объявлено до шагов, потому что используется в нескольких шагах
   let addButton: Locator, dialog: Locator;
 
-  await test.step('Шаг 1. Открыть /projects → «Добавить пространство»', async () => {
+  await test.step('Шаг 1. Открыть /projects → «Добавить проект»', async () => {
     await page.goto('/projects');
-    addButton = page.getByRole('banner').getByRole('button', { name: 'Добавить пространство' });
+    addButton = page.getByRole('banner').getByRole('button', { name: 'Добавить проект' });
     await addButton.click({ timeout: 60_000 });
-    dialog = page.getByRole('dialog', { name: 'Добавить пространство' });
+    dialog = page.getByRole('dialog', { name: 'Добавить проект' });
   });
 
   await test.step('Шаг 2. Ввести название «TEST_Сброс формы»', async () => {
@@ -20,7 +20,7 @@ test('SM-24 Сброс формы по Esc', async ({ page }) => {
     await expect(dialog).toBeHidden();
   });
 
-  await test.step('Шаг 4. Снова нажать «Добавить пространство»', async () => {
+  await test.step('Шаг 4. Снова нажать «Добавить проект»', async () => {
     await addButton.click();
 
     // Ожидание: поля «Название» и «Алиас» пустые

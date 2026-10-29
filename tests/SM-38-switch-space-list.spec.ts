@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
-test('SM-38 «Сменить пространство»', async ({ page }) => {
+test('SM-38 «Сменить проект»', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { name, url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
 
@@ -9,8 +9,8 @@ test('SM-38 «Сменить пространство»', async ({ page }) => {
     await page.goto(url);
   });
 
-  await test.step('Шаг 2. Нажать «Сменить пространство»', async () => {
-    await page.getByRole('button', { name: 'Сменить пространство' }).filter({ hasText: name }).click({ timeout: 60_000 });
+  await test.step('Шаг 2. Нажать «Сменить проект»', async () => {
+    await page.getByRole('button', { name: 'Сменить проект' }).filter({ hasText: name }).click({ timeout: 60_000 });
 
     // Ожидание: открылся список пространств с поиском, в нём есть пространство прогона
     await expect(page.getByRole('textbox', { name: 'Фильтр по имени или #тегу…' })).toBeVisible();

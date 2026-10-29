@@ -6,7 +6,7 @@ test('SM-08 Поиск без результатов', async ({ page }) => {
 
   await test.step('Шаг 1. Открыть /projects', async () => {
     await page.goto('/projects');
-    search = page.getByRole('textbox', { name: 'Название пространства или документа…' });
+    search = page.getByRole('textbox', { name: 'Название проекта или документа…' });
     await expect(search).toBeVisible({ timeout: 60_000 });
   });
 

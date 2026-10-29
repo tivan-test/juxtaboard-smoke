@@ -19,7 +19,7 @@ test('SM-34 Переход из оплаты в проект', async ({ page }) 
     // Ожидание 1: открылся навигатор пространства прогона
     // Адрес навигатора может дополняться параметрами (?explorerMode=docs), поэтому сравниваем начало адреса
     await expect(page).toHaveURL(new RegExp(`^${url.replace(/[.?]/g, '\\$&')}`));
-    await expect(page.getByRole('button', { name: 'Сменить пространство' }).filter({ hasText: name })).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByRole('button', { name: 'Сменить проект' }).filter({ hasText: name })).toBeVisible({ timeout: 60_000 });
   });
 
   await test.step('Шаг 3. Нажать «Назад» в браузере', async () => {

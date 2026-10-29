@@ -7,14 +7,14 @@ test('SM-32 Язык EN и возврат на RU', async ({ page }) => {
 
   await test.step('Шаг 1. Открыть /projects → кнопка профиля', async () => {
     await page.goto('/projects');
-    await expect(pageTitle).toHaveText('Пространства', { timeout: 60_000 });
+    await expect(pageTitle).toHaveText('Проекты', { timeout: 60_000 });
     await profileButton.click();
   });
 
   await test.step('Шаг 2. В «Язык интерфейса» выбрать «EN»', async () => {
     await menu.getByRole('button', { name: 'EN', exact: true }).click();
 
-    // Ожидание 1: заголовок «Пространства» сменился английским
+    // Ожидание 1: заголовок «Проекты» сменился английским
     await expect(pageTitle).toHaveText(/^[A-Za-z ]+$/);
   });
 
@@ -23,7 +23,7 @@ test('SM-32 Язык EN и возврат на RU', async ({ page }) => {
     await profileButton.click();
     await menu.getByRole('button', { name: 'RU', exact: true }).click();
 
-    // Ожидание 2: снова виден заголовок «Пространства»
-    await expect(pageTitle).toHaveText('Пространства');
+    // Ожидание 2: снова виден заголовок «Проекты»
+    await expect(pageTitle).toHaveText('Проекты');
   });
 });

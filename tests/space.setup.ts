@@ -8,10 +8,10 @@ setup('создание пространства прогона', async ({ page 
   const pad = (n: number) => String(n).padStart(2, '0');
   const name = `TEST_${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
 
-  // Шаг 1. На странице /projects нажать «Добавить пространство»
+  // Шаг 1. На странице /projects нажать «Добавить проект»
   await page.goto('/projects');
-  await page.getByRole('banner').getByRole('button', { name: 'Добавить пространство' }).click();
-  const dialog = page.getByRole('dialog', { name: 'Добавить пространство' });
+  await page.getByRole('banner').getByRole('button', { name: 'Добавить проект' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Добавить проект' });
 
   // Шаг 2. Ввести название
   await dialog.getByRole('textbox', { name: 'Название' }).fill(name);

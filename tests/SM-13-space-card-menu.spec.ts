@@ -17,11 +17,11 @@ test('SM-13 Меню ⋯ пространства', async ({ page }) => {
   await test.step('Шаг 2. Навести на карточку пространства прогона и нажать ⋯', async () => {
     await openSpaceCardActions(spaceCard(activeSpaces(page), name));
 
-    // Ожидание: в меню есть «Редактировать», «Пользователи и права», «Скрыть из моего списка», «Удалить пространство»
+    // Ожидание: в меню есть «Редактировать», «Пользователи и права», «Скрыть из моего списка», «Удалить проект»
     menu = page.getByRole('menu');
     await expect(menu.getByRole('menuitem', { name: 'Редактировать', exact: true })).toBeVisible();
     await expect(menu.getByRole('menuitem', { name: 'Пользователи и права', exact: true })).toBeVisible();
     await expect(menu.getByRole('menuitem', { name: 'Скрыть из моего списка', exact: true })).toBeVisible();
-    await expect(menu.getByRole('menuitem', { name: 'Удалить пространство', exact: true })).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Удалить проект', exact: true })).toBeVisible();
   });
 });

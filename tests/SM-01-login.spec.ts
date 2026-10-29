@@ -16,6 +16,6 @@ test('SM-01 Вход в аккаунт', async ({ page }) => {
 
     // Ожидание: открылся список пространств. Вход бывает медленным, ждём до 60 с
     await expect(page).toHaveURL(/\/projects/, { timeout: 60_000 });
-    await expect(page.getByRole('heading', { name: 'Пространства', exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole('heading', { name: 'Проекты', exact: true })).toBeVisible({ timeout: 30_000 });
   });
 });

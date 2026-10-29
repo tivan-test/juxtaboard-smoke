@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test('SM-05 Логотип возвращает к началу', async ({ page }) => {
   await test.step('Шаг 1. Открыть /projects', async () => {
     await page.goto('/projects');
-    await expect(page.getByRole('heading', { name: 'Пространства', exact: true })).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByRole('heading', { name: 'Проекты', exact: true })).toBeVisible({ timeout: 60_000 });
   });
 
   await test.step('Шаг 2. Прокрутить страницу вниз до конца', async () => {

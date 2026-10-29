@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 test('SM-48 Смена алиаса и возврат', async ({ page }) => {
   // Пространство прогона (SM-02) создано перед прогоном
   const { name, url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
-  const editDialog = page.getByRole('dialog', { name: 'Редактировать пространство' });
+  const editDialog = page.getByRole('dialog', { name: 'Редактировать проект' });
   const alias = editDialog.getByRole('textbox', { name: 'Алиас' });
 
   // Объявлено до шагов, потому что используется в нескольких шагах

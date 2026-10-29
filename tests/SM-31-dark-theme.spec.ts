@@ -30,7 +30,7 @@ test('SM-31 Тёмная тема и возврат', async ({ page }) => {
     await page.reload();
 
     // Ожидание 2: страница в тёмной теме
-    await expect(page.getByRole('heading', { name: 'Пространства', exact: true })).toBeVisible({ timeout: 60_000 });
+    await expect(page.getByRole('heading', { name: 'Проекты', exact: true })).toBeVisible({ timeout: 60_000 });
     await expect(html).toHaveCSS('color-scheme', 'dark');
   });
 

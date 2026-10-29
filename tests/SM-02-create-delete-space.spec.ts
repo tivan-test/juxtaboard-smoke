@@ -8,10 +8,10 @@ test('SM-02 Создание и удаление пространства', asyn
   // Объявлено до шагов, потому что используется в нескольких шагах
   let createDialog: Locator, deleteDialog: Locator, deleteButton: Locator, confirm: Locator;
 
-  await test.step('Шаг 1. На странице /projects нажать «Добавить пространство»', async () => {
+  await test.step('Шаг 1. На странице /projects нажать «Добавить проект»', async () => {
     await page.goto('/projects');
-    await page.getByRole('banner').getByRole('button', { name: 'Добавить пространство' }).click();
-    createDialog = page.getByRole('dialog', { name: 'Добавить пространство' });
+    await page.getByRole('banner').getByRole('button', { name: 'Добавить проект' }).click();
+    createDialog = page.getByRole('dialog', { name: 'Добавить проект' });
   });
 
   await test.step('Шаг 2. Ввести название TEST_ГГГГММДД_ЧЧммсс_SM02', async () => {
@@ -26,13 +26,13 @@ test('SM-02 Создание и удаление пространства', asyn
     await expect(page.getByText('Документов пока нет')).toBeVisible({ timeout: 30_000 });
   });
 
-  await test.step('Шаг 4. В шапке навигатора нажать «Администрирование» → «Удалить пространство»', async () => {
+  await test.step('Шаг 4. В шапке навигатора нажать «Администрирование» → «Удалить проект»', async () => {
     await page.getByRole('button', { name: 'Администрирование' }).click();
-    await page.getByRole('menuitem', { name: 'Удалить пространство' }).click();
+    await page.getByRole('menuitem', { name: 'Удалить проект' }).click();
     deleteDialog = page.getByRole('alertdialog', { name: 'Вы уверены?' });
-    deleteButton = deleteDialog.getByRole('button', { name: 'Удалить пространство' });
+    deleteButton = deleteDialog.getByRole('button', { name: 'Удалить проект' });
 
-    // Ожидание 2: кнопка «Удалить пространство» неактивна
+    // Ожидание 2: кнопка «Удалить проект» неактивна
     await expect(deleteButton).toBeDisabled();
 
     // Защита: удаляем только своё пространство с префиксом TEST_, найденное по точному названию
@@ -43,18 +43,18 @@ test('SM-02 Создание и удаление пространства', asyn
   await test.step('Шаг 5. Ввести название пространства в поле подтверждения', async () => {
     await confirm.fill(name);
 
-    // Ожидание 3: кнопка «Удалить пространство» активна
+    // Ожидание 3: кнопка «Удалить проект» активна
     await expect(deleteButton).toBeEnabled();
   });
 
-  await test.step('Шаг 6. Нажать «Удалить пространство»', async () => {
+  await test.step('Шаг 6. Нажать «Удалить проект»', async () => {
     await deleteButton.click();
     await expect(deleteDialog).toBeHidden({ timeout: 30_000 });
   });
 
-  await test.step('Шаг 7. Открыть /projects и ввести название в поиск «Название пространства или документа…»', async () => {
+  await test.step('Шаг 7. Открыть /projects и ввести название в поиск «Название проекта или документа…»', async () => {
     await page.goto('/projects');
-    await page.getByRole('textbox', { name: 'Название пространства или документа…' }).fill(name);
+    await page.getByRole('textbox', { name: 'Название проекта или документа…' }).fill(name);
 
     // Ожидание 4: видно «Ничего не найдено»
     await expect(page.getByText('Ничего не найдено')).toBeVisible({ timeout: 30_000 });

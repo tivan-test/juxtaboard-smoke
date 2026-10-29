@@ -17,11 +17,11 @@ test('SM-47 «Администрирование»', async ({ page }) => {
   await test.step('Шаг 2. Нажать «Администрирование»', async () => {
     await admin.click();
 
-    // Ожидание: видны «Редактировать», «Журнал изменений», «Журнал изменений данных», «Удалить пространство» (ничего не нажимаем)
+    // Ожидание: видны «Редактировать», «Журнал изменений», «Журнал изменений данных», «Удалить проект» (ничего не нажимаем)
     menu = page.getByRole('menu', { name: 'Администрирование' });
     await expect(menu.getByRole('menuitem', { name: 'Редактировать', exact: true })).toBeVisible();
     await expect(menu.getByRole('menuitem', { name: 'Журнал изменений', exact: true })).toBeVisible();
     await expect(menu.getByRole('menuitem', { name: 'Журнал изменений данных', exact: true })).toBeVisible();
-    await expect(menu.getByRole('menuitem', { name: 'Удалить пространство', exact: true })).toBeVisible();
+    await expect(menu.getByRole('menuitem', { name: 'Удалить проект', exact: true })).toBeVisible();
   });
 });

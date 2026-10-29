@@ -25,8 +25,8 @@ test('SM-15 Скрыть и показать пространство', async ({
     await expect(active.getByRole('heading', { name, exact: true })).toHaveCount(0);
   });
 
-  await test.step('Шаг 3. Раскрыть «Скрытые пространства»', async () => {
-    await page.getByRole('button', { name: /^Скрытые пространства/ }).click();
+  await test.step('Шаг 3. Раскрыть «Скрытые проекты»', async () => {
+    await page.getByRole('button', { name: /^Скрытые проекты/ }).click();
 
     // Ожидание 2: карточка есть среди скрытых
     hiddenCard = spaceCard(hidden, name);

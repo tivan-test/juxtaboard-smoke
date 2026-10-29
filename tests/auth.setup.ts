@@ -6,11 +6,11 @@ setup.use({ storageState: existsSync('auth/session.json') ? 'auth/session.json' 
 
 setup('вход и сохранение сессии', async ({ page }) => {
   await page.goto('/projects');
-  const spacesHeading = page.getByRole('heading', { name: 'Пространства', exact: true });
+  const projectsHeading = page.getByRole('heading', { name: 'Проекты', exact: true });
   const emailField = page.getByLabel('Email');
 
   // Либо остались на /projects (сессия жива), либо сайт перекинул на /auth/login
-  await expect(spacesHeading.or(emailField)).toBeVisible({ timeout: 60_000 });
+  await expect(projectsHeading.or(emailField)).toBeVisible({ timeout: 60_000 });
 
   if (await emailField.isVisible()) {
     // Сессия устарела: входим заново
@@ -20,7 +20,7 @@ setup('вход и сохранение сессии', async ({ page }) => {
 
     // Вход бывает медленным (10-20 с), поэтому ждём до 60 с
     await expect(page).toHaveURL(/\/projects/, { timeout: 60_000 });
-    await expect(spacesHeading).toBeVisible({ timeout: 30_000 });
+    await expect(projectsHeading).toBeVisible({ timeout: 30_000 });
   }
 
   await page.context().storageState({ path: 'auth/session.json' });

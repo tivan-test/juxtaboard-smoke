@@ -4,10 +4,10 @@ test('SM-22 Алиас из 36 символов', async ({ page }) => {
   // Объявлено до шагов, потому что используется в нескольких шагах
   let dialog: Locator;
 
-  await test.step('Шаг 1. Открыть /projects → «Добавить пространство»', async () => {
+  await test.step('Шаг 1. Открыть /projects → «Добавить проект»', async () => {
     await page.goto('/projects');
-    await page.getByRole('banner').getByRole('button', { name: 'Добавить пространство' }).click({ timeout: 60_000 });
-    dialog = page.getByRole('dialog', { name: 'Добавить пространство' });
+    await page.getByRole('banner').getByRole('button', { name: 'Добавить проект' }).click({ timeout: 60_000 });
+    dialog = page.getByRole('dialog', { name: 'Добавить проект' });
   });
 
   await test.step('Шаг 2. Ввести в «Алиас» «abcdefghijabcdefghijabcdefghijabcdef»', async () => {

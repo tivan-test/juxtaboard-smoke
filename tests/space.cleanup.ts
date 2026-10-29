@@ -13,9 +13,9 @@ test('удаление пространства прогона', async ({ page }
   await page.goto(url);
   await expect(page.getByRole('button', { name: 'Администрирование' })).toBeVisible({ timeout: 60_000 });
 
-  // «Администрирование» → «Удалить пространство»
+  // «Администрирование» → «Удалить проект»
   await page.getByRole('button', { name: 'Администрирование' }).click();
-  await page.getByRole('menuitem', { name: 'Удалить пространство' }).click();
+  await page.getByRole('menuitem', { name: 'Удалить проект' }).click();
 
   // Окно подтверждения должно быть именно про это пространство (точное название)
   const dialog = page.getByRole('alertdialog', { name: 'Вы уверены?' });
@@ -24,13 +24,13 @@ test('удаление пространства прогона', async ({ page }
 
   // Вводим точное название и удаляем
   await confirm.fill(name);
-  await dialog.getByRole('button', { name: 'Удалить пространство' }).click();
+  await dialog.getByRole('button', { name: 'Удалить проект' }).click();
 
   // Ждём, пока закроется окно подтверждения
   await expect(dialog).toBeHidden({ timeout: 30_000 });
 
-  // Пространство удалено: его адрес отвечает «У вас нет доступа к этому пространству»
+  // Пространство удалено: его адрес отвечает «У вас нет доступа к этому проекту»
   // (поиск на главной обновляется с задержкой, поэтому по нему не проверяем)
   await page.goto(url);
-  await expect(page.getByRole('heading', { name: 'У вас нет доступа к этому пространству' })).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole('heading', { name: 'У вас нет доступа к этому проекту' })).toBeVisible({ timeout: 60_000 });
 });

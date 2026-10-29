@@ -8,8 +8,8 @@ test('SM-35 Возврат из оплаты', async ({ page }) => {
   await test.step('Шаг 2. Нажать «К проектам»', async () => {
     await page.getByRole('link', { name: 'К проектам' }).click({ timeout: 60_000 });
 
-    // Ожидание: адрес /projects, виден заголовок «Пространства»
+    // Ожидание: адрес /projects, виден заголовок «Проекты»
     await expect(page).toHaveURL(/\/projects$/);
-    await expect(page.getByRole('heading', { name: 'Пространства', exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole('heading', { name: 'Проекты', exact: true })).toBeVisible({ timeout: 30_000 });
   });
 });

@@ -17,7 +17,7 @@ test('SM-59 «Экспорт / Импорт», без экспорта', async (
 
   await test.step('Шаг 2. Нажать «Экспорт / Импорт»', async () => {
     await page.getByRole('menuitem', { name: 'Экспорт / Импорт', exact: true }).click();
-    dialog = page.getByRole('dialog', { name: 'Экспорт / импорт пространства' });
+    dialog = page.getByRole('dialog', { name: 'Экспорт / импорт проекта' });
 
     // Ожидание: видны вкладки «Экспорт» и «Импорт» (экспорт не запускаем)
     await expect(dialog.getByRole('button', { name: 'Экспорт', exact: true })).toBeVisible();

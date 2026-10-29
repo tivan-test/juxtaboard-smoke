@@ -5,11 +5,11 @@ test('SM-29 Возврат из «Мои задачи»', async ({ page }) => {
     await page.goto('/me/work');
   });
 
-  await test.step('Шаг 2. Нажать «← Пространства»', async () => {
-    await page.getByRole('banner').getByRole('link', { name: 'Пространства' }).click({ timeout: 60_000 });
+  await test.step('Шаг 2. Нажать «← Проекты»', async () => {
+    await page.getByRole('banner').getByRole('link', { name: 'Проекты' }).click({ timeout: 60_000 });
 
-    // Ожидание: адрес /projects, виден заголовок «Пространства»
+    // Ожидание: адрес /projects, виден заголовок «Проекты»
     await expect(page).toHaveURL(/\/projects$/);
-    await expect(page.getByRole('heading', { name: 'Пространства', exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole('heading', { name: 'Проекты', exact: true })).toBeVisible({ timeout: 30_000 });
   });
 });

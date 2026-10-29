@@ -10,15 +10,15 @@ test('SM-07 Поиск пространства', async ({ page }) => {
 
   await test.step('Шаг 1. Открыть /projects', async () => {
     await page.goto('/projects');
-    search = page.getByRole('textbox', { name: 'Название пространства или документа…' });
+    search = page.getByRole('textbox', { name: 'Название проекта или документа…' });
     await expect(search).toBeVisible({ timeout: 60_000 });
   });
 
   await test.step('Шаг 2. Ввести в поиск название пространства прогона', async () => {
     await search.fill(name);
 
-    // Ожидание: в группе «Пространства» есть пространство прогона
-    spacesGroup = page.getByRole('list', { name: 'Пространства' });
+    // Ожидание: в группе «Проекты» есть пространство прогона
+    spacesGroup = page.getByRole('list', { name: 'Проекты' });
     await expect(spacesGroup.getByRole('link', { name: new RegExp(`^${name} `) })).toBeVisible({ timeout: 30_000 });
   });
 });

@@ -23,7 +23,7 @@ test('SM-111 Поиск документа с главной', async ({ page }) 
 
   await test.step('Шаг 1. Открыть /projects, ввести в поиск «TEST_SM111»', async () => {
     await page.goto('/projects');
-    search = page.getByRole('textbox', { name: 'Название пространства или документа…' });
+    search = page.getByRole('textbox', { name: 'Название проекта или документа…' });
     await expect(search).toBeVisible({ timeout: 60_000 });
     await search.fill('TEST_SM111');
 
