@@ -15,5 +15,3 @@
 !/docker-compose.yml
 !/.dockerignore
 !/README.md
-# Служебный скрипт агента (вставка скринов в журнал Juxtaboard) в git не входит
-/scripts/attach-screens.mjs

@@ -208,6 +208,16 @@ export function writeReport(input: ReportInput): string {
   return file;
 }
 
+// Итог каждого теста части — для публикации статусов в таблицы
+export function partResults(part: Part): { id: string; passed: boolean }[] {
+  if (!part.ran || !existsSync(part.jsonFile)) return [];
+  const json = JSON.parse(readFileSync(part.jsonFile, 'utf8')) as { suites?: Suite[] };
+  return collect(json.suites)
+    .filter((t) => t.status !== 'skipped')
+    .sort((a, b) => byId(a.id, b.id))
+    .map((t) => ({ id: t.id, passed: t.status === 'expected' || t.status === 'flaky' }));
+}
+
 // Список PNG в папке отчёта — для итоговой строки в консоли
 export function screenshots(runDir: string): string[] {
   return readdirSync(runDir).filter((f) => f.endsWith('.png'));
