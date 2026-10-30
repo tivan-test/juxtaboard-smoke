@@ -1,0 +1,14 @@
+# Пароли, сессия и результаты прогонов в образ не попадают
+.env
+auth/
+runs/
+test-results/
+run-space.json
+node_modules/
+.git/
+# Локальные копии таблиц и служебные файлы агента
+TableSmoke.md
+TableReg.md
+CLAUDE.md
+.claude/
+.mcp.json

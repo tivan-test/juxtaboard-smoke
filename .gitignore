@@ -1,7 +1,9 @@
-# В git только tests/, файлы настройки проекта и .env.example (без паролей).
+# В git только tests/, скрипты запуска, файлы настройки проекта и .env.example (без паролей).
 # Всё остальное исключено: .env с паролем, auth/ с сессией, runs/, run-space.json, node_modules/ и т. д.
 /*
 !/tests/
+!/scripts/
+!/deploy/
 !/.gitignore
 !/package.json
 !/bun.lock
@@ -9,3 +11,9 @@
 !/tsconfig.json
 !/playwright.config.ts
 !/.env.example
+!/Dockerfile
+!/docker-compose.yml
+!/.dockerignore
+!/README.md
+# Служебный скрипт агента (вставка скринов в журнал Juxtaboard) в git не входит
+/scripts/attach-screens.mjs

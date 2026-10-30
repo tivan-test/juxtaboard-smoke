@@ -2,8 +2,9 @@
   "name": "juxtaboard-smoke",
   "private": true,
   "scripts": {
-    "lint": "eslint tests",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint tests scripts",
+    "typecheck": "tsc --noEmit",
+    "test:all": "bun scripts/run.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
