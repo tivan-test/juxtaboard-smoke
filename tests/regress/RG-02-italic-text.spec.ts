@@ -9,7 +9,7 @@ test('RG-02 Курсив в редакторе документа', async ({ pag
   const { url } = JSON.parse(readFileSync('run-space.json', 'utf8'));
   const editor = documentEditor(page);
 
-  await test.step('Предусловие (SM-76): открыть пространство прогона', async () => {
+  await test.step('Предусловие (SM-02): открыть пространство прогона', async () => {
     await openSpace(page, url);
   });
 
